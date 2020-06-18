@@ -1,0 +1,2 @@
+# schema
+Simplified JSON-Schema
