@@ -11,6 +11,7 @@ import (
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 	Properties  map[string]Schema
@@ -47,6 +48,10 @@ func (object *Object) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
 		object.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		object.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {

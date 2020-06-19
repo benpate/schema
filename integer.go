@@ -9,6 +9,7 @@ import (
 // Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 	Minimum     int
@@ -31,6 +32,10 @@ func (integer *Integer) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
 		integer.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		integer.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {

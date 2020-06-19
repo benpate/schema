@@ -10,6 +10,7 @@ import (
 // String represents a string data type within a JSON-Schema.
 type String struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 	Format      string
@@ -33,6 +34,10 @@ func (str *String) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
 		str.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		str.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {

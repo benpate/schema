@@ -9,6 +9,7 @@ import (
 // Boolean represents a boolean data type within a JSON-Schema.
 type Boolean struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 }
@@ -27,6 +28,10 @@ func (boolean *Boolean) Path(path string) (Schema, *derp.Error) {
 func (boolean *Boolean) Populate(data map[string]interface{}) {
 	if id, ok := data["$id"].(string); ok {
 		boolean.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		boolean.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {

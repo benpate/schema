@@ -9,6 +9,7 @@ import (
 // Array represents an array data type within a JSON-Schema.
 type Array struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 	Items       Schema
@@ -29,6 +30,10 @@ func (array *Array) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
 		array.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		array.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {

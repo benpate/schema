@@ -9,6 +9,7 @@ import (
 // Number represents a number data type within a JSON-Schema.
 type Number struct {
 	ID          string
+	Comment     string
 	Description string
 	Required    bool
 	Minimum     float64
@@ -31,6 +32,10 @@ func (number *Number) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
 		number.ID = id
+	}
+
+	if comment, ok := data["$comment"].(string); ok {
+		number.Comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {
