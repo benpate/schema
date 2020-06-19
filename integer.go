@@ -6,6 +6,7 @@ import (
 	"github.com/benpate/derp"
 )
 
+// Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
 	ID          string
 	Description string
@@ -15,27 +16,17 @@ type Integer struct {
 	MultipleOf  int
 }
 
+// Validate compares a generic data value using this Schema
 func (integar *Integer) Validate(data interface{}) *derp.Error {
 	return nil
 }
 
+// Path uses JSON-Path notation to retrieve sub-items of this Schema
 func (integer *Integer) Path(path string) (Schema, *derp.Error) {
 	return nil, derp.New(500, "schema.Integer.Path", "Integer values do not have additional properties")
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (integer *Integer) UnmarshalJSON(data []byte) error {
-
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.Integer.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
-	}
-
-	integer.Populate(temp)
-	return nil
-}
-
+// Populate fills this object, using a generic data value
 func (integer *Integer) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
@@ -61,4 +52,17 @@ func (integer *Integer) Populate(data map[string]interface{}) {
 	if multipleOf, ok := data["multipleOf"].(int); ok {
 		integer.MultipleOf = multipleOf
 	}
+}
+
+// UnmarshalJSON fulfils the json.Unmarshaller interface
+func (integer *Integer) UnmarshalJSON(data []byte) error {
+
+	var temp map[string]interface{}
+
+	if err := json.Unmarshal(data, &temp); err != nil {
+		return derp.New(500, "schema.Integer.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+	}
+
+	integer.Populate(temp)
+	return nil
 }

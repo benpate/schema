@@ -8,6 +8,7 @@ import (
 	"github.com/benpate/list"
 )
 
+// Object represents an object data type within a JSON-Schema.
 type Object struct {
 	ID          string
 	Description string
@@ -15,10 +16,12 @@ type Object struct {
 	Properties  map[string]Schema
 }
 
+// Validate compares a generic data value using this Schema
 func (object *Object) Validate(data interface{}) *derp.Error {
 	return nil
 }
 
+// Path uses JSON-Path notation to retrieve sub-items of this Schema
 func (object *Object) Path(path string) (Schema, *derp.Error) {
 
 	path = strings.TrimPrefix(path, "#")
@@ -39,19 +42,7 @@ func (object *Object) Path(path string) (Schema, *derp.Error) {
 	return nil, derp.New(500, "schema.Object.Path", "Invalid Path", path)
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (object *Object) UnmarshalJSON(data []byte) error {
-
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.Object.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
-	}
-
-	object.Populate(temp)
-	return nil
-}
-
+// Populate fills this object, using a generic data value
 func (object *Object) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
@@ -80,4 +71,17 @@ func (object *Object) Populate(data map[string]interface{}) {
 			}
 		}
 	}
+}
+
+// UnmarshalJSON fulfils the json.Unmarshaller interface
+func (object *Object) UnmarshalJSON(data []byte) error {
+
+	var temp map[string]interface{}
+
+	if err := json.Unmarshal(data, &temp); err != nil {
+		return derp.New(500, "schema.Object.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+	}
+
+	object.Populate(temp)
+	return nil
 }
