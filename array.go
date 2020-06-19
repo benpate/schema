@@ -24,5 +24,5 @@ func (array *Array) Validate(data interface{}) *derp.Error {
 }
 
 func (array *Array) Path(path string) (Validator, *derp.Error) {
-	return nil, nil
+	return array.Items, nil
 }

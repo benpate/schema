@@ -15,5 +15,5 @@ func (boolean *Boolean) Validate(data interface{}) *derp.Error {
 }
 
 func (boolean *Boolean) Path(path string) (Validator, *derp.Error) {
-	return nil, nil
+	return nil, derp.New("schema.Boolean.Path", "Boolean values do not have additional properties")
 }

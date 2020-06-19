@@ -36,5 +36,5 @@ func (str *String) Validate(data interface{}) *derp.Error {
 }
 
 func (str *String) Path(path string) (Validator, *derp.Error) {
-	return nil, nil
+	return nil, derp.New("schema.String.Path", "String values do not have additional properties")
 }

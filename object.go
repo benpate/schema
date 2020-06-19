@@ -1,6 +1,11 @@
 package schema
 
-import "github.com/benpate/derp"
+import (
+	"strings"
+
+	"github.com/benpate/derp"
+	"github.com/benpate/list"
+)
 
 type Object struct {
 	Properties map[string]Schema
@@ -32,5 +37,21 @@ func (object *Object) Validate(data interface{}) *derp.Error {
 }
 
 func (object *Object) Path(path string) (Validator, *derp.Error) {
-	return nil, nil
+
+	path = strings.TrimPrefix(path, "#")
+	head, tail := list.Split(path, "/")
+
+	if subObject, ok := object.Properties[head]; ok {
+
+		if tail == "" {
+			return subObject, nil
+		}
+
+		if result, err := subObject.Path(tail); err = nil {
+			return result, nil
+		}
+	}
+
+	// Fall through to here means invalid path.
+	return nil, derp.New("schema.Object.Path", "Invalid Path", path)
 }

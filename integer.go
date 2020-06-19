@@ -31,5 +31,5 @@ func (integar *Integer) Validate(data interface{}) *derp.Error {
 }
 
 func (integer *Integer) Path(path string) (Validator, *derp.Error) {
-	return nil, nil
+	return nil, derp.New("schema.Integer.Path", "Integer values do not have additional properties")
 }
