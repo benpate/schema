@@ -19,6 +19,7 @@ type Schema interface {
 	Path(string) (Schema, *derp.Error)
 }
 
+// NewFromJSON creates a new Schema object using a JSON-serialized byte array.
 func NewFromJSON(data []byte) (Schema, *derp.Error) {
 
 	unmarshalled := make(map[string]interface{}, 0)
@@ -36,6 +37,7 @@ func NewFromJSON(data []byte) (Schema, *derp.Error) {
 	return result, nil
 }
 
+// New creates a new Schema object using a generic map
 func New(data map[string]interface{}) (Schema, *derp.Error) {
 
 	var result Schema

@@ -17,7 +17,7 @@ type Integer struct {
 }
 
 // Validate compares a generic data value using this Schema
-func (integar *Integer) Validate(data interface{}) *derp.Error {
+func (integer *Integer) Validate(data interface{}) *derp.Error {
 	return nil
 }
 
