@@ -1,7 +1,7 @@
 # schema 👍
 
 
-[![GoDoc](http://img.shields.io/badge/go-documentation-green.svg?style=flat-square)](https://pkg.go.dev/github.com/benpate/schema)
+[![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/benpate/schema)
 [![Go Report Card](https://goreportcard.com/badge/github.com/benpate/schema?style=flat-square)](https://goreportcard.com/report/github.com/benpate/schema)
 [![Build Status](http://img.shields.io/travis/benpate/schema.svg?style=flat-square)](https://travis-ci.org/benpate/schema)
 [![Codecov](https://img.shields.io/codecov/c/github/benpate/schema.svg?style=flat-square)](https://codecov.io/gh/benpate/schema)
@@ -25,3 +25,4 @@ This library implements a sub-set of the [JSON-Schema specification](http://json
 ### What's Left Out
 
 * References
+* Loading remote Schemas by URI.
