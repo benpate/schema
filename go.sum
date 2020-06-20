@@ -1,5 +1,7 @@
 github.com/benpate/convert v0.1.0 h1:9sXeEHhbZeia7GX80W/VGBGh9zUPxavykB1RO088E9w=
 github.com/benpate/convert v0.1.0/go.mod h1:AQdzN+DiOW8E+5n/dmDeb7PdOJp/1KuQfnB8QjBpnAc=
+github.com/benpate/convert v0.1.2 h1:Jc3V0ZqLJKm9XlD+MumrisS1/q8wdtk5jb6fNtNCD7s=
+github.com/benpate/convert v0.1.2/go.mod h1:AQdzN+DiOW8E+5n/dmDeb7PdOJp/1KuQfnB8QjBpnAc=
 github.com/benpate/data v0.2.2 h1:FRw6HsFUntaoh1d0d0ZEHh4GOTGu7Vg5zL6huWVWpTk=
 github.com/benpate/data v0.2.2/go.mod h1:gLchngJz/+24TRq0qKJwxKsnXeGP6KE7y+i67YEZNQE=
 github.com/benpate/derp v0.9.2 h1:cq0KsxdF3CrWAZ4bttJvoIOyJx3t9jczkxu3ifgOyEg=

@@ -9,17 +9,11 @@ import (
 // Schema interface
 type Schema interface {
 
-	// Populate uses a generic map to fill the schema object
-	Populate(map[string]interface{})
-
-	// Validate checks an arbitrary data structure against the rules in the schema
-	Validate(interface{}) *derp.Error
-
-	// Path retrieves sub-items in the schema
-	Path(string) (Schema, *derp.Error)
-
 	// ID provides a standard way to retrieve a Schema's ID
 	ID() string
+
+	// Comment provides a standard way to retrieve a Schema's Comment
+	Comment() string
 
 	// Description provides a standard way to retrieve a Schema's Description
 	Description() string
@@ -29,6 +23,15 @@ type Schema interface {
 
 	// Required provides a standard way to tell if a Schema value is required or not.
 	Required() bool
+
+	// Populate uses a generic map to fill the schema object
+	Populate(map[string]interface{})
+
+	// Validate checks an arbitrary data structure against the rules in the schema
+	Validate(interface{}) *derp.Error
+
+	// Path retrieves sub-items in the schema
+	Path(string) (Schema, *derp.Error)
 }
 
 // NewFromJSON creates a new Schema object using a JSON-serialized byte array.

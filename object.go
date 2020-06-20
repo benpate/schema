@@ -46,8 +46,8 @@ func (object *Object) Required() bool {
 }
 
 // Properties returns the TRUE if this value is required by the schema
-func (object *Object) Properties() bool {
-	return object.required
+func (object *Object) Properties() map[string]Schema {
+	return object.properties
 }
 
 // Validate compares a generic data value using this Schema
