@@ -17,6 +17,18 @@ type Schema interface {
 
 	// Path retrieves sub-items in the schema
 	Path(string) (Schema, *derp.Error)
+
+	// ID provides a standard way to retrieve a Schema's ID
+	ID() string
+
+	// Description provides a standard way to retrieve a Schema's Description
+	Description() string
+
+	// Type provides a standard way to retrieve a Schema's Type
+	Type() string
+
+	// Required provides a standard way to tell if a Schema value is required or not.
+	Required() bool
 }
 
 // NewFromJSON creates a new Schema object using a JSON-serialized byte array.
@@ -43,22 +55,22 @@ func New(data map[string]interface{}) (Schema, *derp.Error) {
 	var result Schema
 
 	switch data["type"] {
-	case "array":
+	case TypeArray:
 		result = &Array{}
 
-	case "boolean":
+	case TypeBoolean:
 		result = &Boolean{}
 
-	case "integer":
+	case TypeInteger:
 		result = &Integer{}
 
-	case "number":
+	case TypeNumber:
 		result = &Number{}
 
-	case "object":
+	case TypeObject:
 		result = &Object{}
 
-	case "string":
+	case TypeString:
 		result = &String{}
 
 	default:

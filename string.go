@@ -7,16 +7,64 @@ import (
 	"github.com/benpate/derp"
 )
 
+// TypeString is the token used by JSON-Schema to designate that a schema describes an string.
+const TypeString = "string"
+
 // String represents a string data type within a JSON-Schema.
 type String struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Format      string
-	MinLength   int
-	MaxLength   int
-	Pattern     string
+	id          string
+	comment     string
+	description string
+	required    bool
+	format      string
+	minLength   int
+	maxLength   int
+	pattern     string
+}
+
+// Type returns the data type of this Schema
+func (str *String) Type() string {
+	return TypeString
+}
+
+// ID returns the unique identifier of this Schema
+func (str *String) ID() string {
+	return str.id
+}
+
+// Comment returns the comment for this Schema
+func (str *String) Comment() string {
+	return str.comment
+}
+
+// Description returns the description of this Schema
+func (str *String) Description() string {
+	return str.description
+}
+
+// Required returns the TRUE if this value is required by the schema
+func (str *String) Required() bool {
+	return str.required
+}
+
+// Format returns the format of this Schema
+func (str *String) Format() string {
+	return str.format
+}
+
+// MinLength returns the minLength value of this item
+func (str *String) MinLength() int {
+	return str.minLength
+}
+
+// MaxLength returns the maxLength value of this item
+func (str *String) MaxLength() int {
+	return str.maxLength
+}
+
+// Pattern returns the RegEx pattern of this Schema
+func (str *String) Pattern() string {
+	return str.pattern
 }
 
 // Validate compares a generic data value using this Schema
@@ -33,35 +81,35 @@ func (str *String) Path(path string) (Schema, *derp.Error) {
 func (str *String) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
-		str.ID = id
+		str.id = id
 	}
 
 	if comment, ok := data["$comment"].(string); ok {
-		str.Comment = comment
+		str.comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {
-		str.Description = description
+		str.description = description
 	}
 
 	if required, ok := data["required"].(bool); ok {
-		str.Required = required
+		str.required = required
 	}
 
 	if format, ok := data["format"].(string); ok {
-		str.Format = format
+		str.format = format
 	}
 
 	if minLength, err := convert.Int(data["minLength"]); err == nil {
-		str.MinLength = minLength
+		str.minLength = minLength
 	}
 
 	if maxLength, err := convert.Int(data["maxLength"]); err == nil {
-		str.MaxLength = maxLength
+		str.maxLength = maxLength
 	}
 
 	if pattern, ok := data["pattern"].(string); ok {
-		str.Pattern = pattern
+		str.pattern = pattern
 	}
 }
 

@@ -8,13 +8,46 @@ import (
 	"github.com/benpate/list"
 )
 
+// TypeObject is the token used by JSON-Schema to designate that a schema describes an object.
+const TypeObject = "object"
+
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Properties  map[string]Schema
+	id          string
+	comment     string
+	description string
+	required    bool
+	properties  map[string]Schema
+}
+
+// Type returns the data type of this Schema
+func (object *Object) Type() string {
+	return TypeObject
+}
+
+// ID returns the unique identifier of this Schema
+func (object *Object) ID() string {
+	return object.id
+}
+
+// Comment returns the comment for this Schema
+func (object *Object) Comment() string {
+	return object.comment
+}
+
+// Description returns the description of this Schema
+func (object *Object) Description() string {
+	return object.description
+}
+
+// Required returns the TRUE if this value is required by the schema
+func (object *Object) Required() bool {
+	return object.required
+}
+
+// Properties returns the TRUE if this value is required by the schema
+func (object *Object) Properties() bool {
+	return object.required
 }
 
 // Validate compares a generic data value using this Schema
@@ -28,7 +61,7 @@ func (object *Object) Path(path string) (Schema, *derp.Error) {
 	path = strings.TrimPrefix(path, "#")
 	head, tail := list.Split(path, "/")
 
-	if subObject, ok := object.Properties[head]; ok {
+	if subObject, ok := object.properties[head]; ok {
 
 		if tail == "" {
 			return subObject, nil
@@ -47,31 +80,31 @@ func (object *Object) Path(path string) (Schema, *derp.Error) {
 func (object *Object) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
-		object.ID = id
+		object.id = id
 	}
 
 	if comment, ok := data["$comment"].(string); ok {
-		object.Comment = comment
+		object.comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {
-		object.Description = description
+		object.description = description
 	}
 
 	if required, ok := data["required"].(bool); ok {
-		object.Required = required
+		object.required = required
 	}
 
 	if properties, ok := data["properties"].(map[string]interface{}); ok {
 
-		object.Properties = make(map[string]Schema, len(properties))
+		object.properties = make(map[string]Schema, len(properties))
 
 		for key, value := range properties {
 
 			if propertyMap, ok := value.(map[string]interface{}); ok {
 
 				if propertyObject, err := New(propertyMap); err == nil {
-					object.Properties[key] = propertyObject
+					object.properties[key] = propertyObject
 				}
 			}
 		}

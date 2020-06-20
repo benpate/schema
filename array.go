@@ -6,13 +6,46 @@ import (
 	"github.com/benpate/derp"
 )
 
+// TypeArray is the token used by JSON-Schema to designate that a schema describes an array.
+const TypeArray = "array"
+
 // Array represents an array data type within a JSON-Schema.
 type Array struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Items       Schema
+	id          string
+	comment     string
+	description string
+	required    bool
+	items       Schema
+}
+
+// Type returns the data type of this Schema
+func (array *Array) Type() string {
+	return TypeArray
+}
+
+// ID returns the unique identifier of this Schema
+func (array *Array) ID() string {
+	return array.id
+}
+
+// Comment returns the comment for this Schema
+func (array *Array) Comment() string {
+	return array.comment
+}
+
+// Description returns the description of this Schema
+func (array *Array) Description() string {
+	return array.description
+}
+
+// Required returns TRUE if this element is Required
+func (array *Array) Required() bool {
+	return array.required
+}
+
+// Items returns the JSON-Schema for all items of this array.
+func (array *Array) Items() Schema {
+	return array.items
 }
 
 // Validate compares a generic data value using this Schema
@@ -22,32 +55,32 @@ func (array *Array) Validate(data interface{}) *derp.Error {
 
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
 func (array *Array) Path(path string) (Schema, *derp.Error) {
-	return array.Items, nil
+	return array.items, nil
 }
 
 // Populate fills this object, using a generic data value
 func (array *Array) Populate(data map[string]interface{}) {
 
 	if id, ok := data["$id"].(string); ok {
-		array.ID = id
+		array.id = id
 	}
 
 	if comment, ok := data["$comment"].(string); ok {
-		array.Comment = comment
+		array.comment = comment
 	}
 
 	if description, ok := data["description"].(string); ok {
-		array.Description = description
+		array.description = description
 	}
 
 	if required, ok := data["required"].(bool); ok {
-		array.Required = required
+		array.required = required
 	}
 
 	if items, ok := data["items"].(map[string]interface{}); ok {
 
 		if object, err := New(items); err == nil {
-			array.Items = object
+			array.items = object
 		}
 	}
 }
