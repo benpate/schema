@@ -12,3 +12,16 @@
 This is my first attempt to create a simplified, minimal implementation of JSON-Schema that is fast and has an easy API.  If you're looking for a complete, rigorous implementation of JSON-Schema, you should try another tool.
 
 ## What it Does
+
+This library implements a sub-set of the [JSON-Schema specification](http://json-schema.org)
+
+### What's Included
+
+* Unmarshal schema from JSON
+* Array, Boolean, Integer, Number, Object, and String type validators.
+* Custom Format rules
+* Happy API for accessing schema information, and walking a schema tree with a [JSON-Pointer](https://tools.ietf.org/html/rfc6901)
+
+### What's Left Out
+
+* References
