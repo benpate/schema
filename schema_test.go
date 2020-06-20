@@ -3,6 +3,7 @@ package schema
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,6 +36,19 @@ func TestSchema(t *testing.T) {
 	assert.Equal(t, friendsItems.Type(), TypeString)
 }
 
+func TestPath(t *testing.T) {
+
+	s := getTestSchema()
+
+	spew.Dump(s)
+
+	city, err := s.Path("#/address/city")
+
+	assert.Equal(t, city.Type(), "string")
+	assert.Equal(t, city.ID(), "city")
+	assert.Nil(t, err)
+}
+
 func getTestSchema() Schema {
 
 	json := []byte(`{
@@ -57,6 +71,16 @@ func getTestSchema() Schema {
 			"friends": {
 			  "type" : "array",
 			  "items" : { "type" : "string"}
+			},
+			"address": {
+				"type": "object",
+				"properties": {
+					"address1": {"type": "string", "$id":"addr1"},
+					"address2": {"type": "string", "$id":"addr2"},
+					"city": {"type": "string", "$id":"city"},
+					"state": {"type": "string", "$id":"state"},
+					"zipCode": {"type": "string", "$id":"zip"}
+				}
 			}
 		},
 		"required": ["title", "content"]

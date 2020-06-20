@@ -58,7 +58,7 @@ func (object *Object) Validate(data interface{}) *derp.Error {
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
 func (object *Object) Path(path string) (Schema, *derp.Error) {
 
-	path = strings.TrimPrefix(path, "#")
+	path = strings.TrimPrefix(path, "#/")
 	head, tail := list.Split(path, "/")
 
 	if subObject, ok := object.properties[head]; ok {
