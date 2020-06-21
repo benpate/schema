@@ -46,12 +46,12 @@ func (number *Number) Required() bool {
 }
 
 // Validate compares a generic data value using this Schema
-func (number *Number) Validate(data interface{}) *derp.Error {
+func (number *Number) Validate(data interface{}) error {
 	return nil
 }
 
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (number *Number) Path(path string) (Schema, *derp.Error) {
+func (number *Number) Path(path string) (Schema, error) {
 	return nil, derp.New(500, "schema.Number.Path", "Number values do not have additional properties")
 }
 
@@ -93,7 +93,7 @@ func (number *Number) UnmarshalJSON(data []byte) error {
 	var temp map[string]interface{}
 
 	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.Number.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+		return derp.Wrap(err, "schema.Number.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
 	}
 
 	number.Populate(temp)

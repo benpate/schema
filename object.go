@@ -51,12 +51,12 @@ func (object *Object) Properties() map[string]Schema {
 }
 
 // Validate compares a generic data value using this Schema
-func (object *Object) Validate(data interface{}) *derp.Error {
+func (object *Object) Validate(data interface{}) error {
 	return nil
 }
 
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (object *Object) Path(path string) (Schema, *derp.Error) {
+func (object *Object) Path(path string) (Schema, error) {
 
 	path = strings.TrimPrefix(path, "#/")
 	head, tail := list.Split(path, "/")
@@ -117,7 +117,7 @@ func (object *Object) UnmarshalJSON(data []byte) error {
 	var temp map[string]interface{}
 
 	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.Object.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+		return derp.Wrap(err, "schema.Object.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
 	}
 
 	object.Populate(temp)

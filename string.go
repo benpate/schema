@@ -68,12 +68,12 @@ func (str *String) Pattern() string {
 }
 
 // Validate compares a generic data value using this Schema
-func (str *String) Validate(data interface{}) *derp.Error {
+func (str *String) Validate(data interface{}) error {
 	return nil
 }
 
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (str *String) Path(path string) (Schema, *derp.Error) {
+func (str *String) Path(path string) (Schema, error) {
 	return nil, derp.New(500, "schema.String.Path", "String values do not have additional properties")
 }
 
@@ -119,7 +119,7 @@ func (str *String) UnmarshalJSON(data []byte) error {
 	var temp map[string]interface{}
 
 	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.String.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+		return derp.Wrap(err, "schema.String.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
 	}
 
 	str.Populate(temp)

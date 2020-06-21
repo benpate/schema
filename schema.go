@@ -28,19 +28,19 @@ type Schema interface {
 	Populate(map[string]interface{})
 
 	// Validate checks an arbitrary data structure against the rules in the schema
-	Validate(interface{}) *derp.Error
+	Validate(interface{}) error
 
 	// Path retrieves sub-items in the schema
-	Path(string) (Schema, *derp.Error)
+	Path(string) (Schema, error)
 }
 
 // NewFromJSON creates a new Schema object using a JSON-serialized byte array.
-func NewFromJSON(data []byte) (Schema, *derp.Error) {
+func NewFromJSON(data []byte) (Schema, error) {
 
 	unmarshalled := make(map[string]interface{}, 0)
 
 	if err := json.Unmarshal(data, &unmarshalled); err != nil {
-		return nil, derp.New(500, "schema.NewFromJSON", "Error Unmarshalling JSON", string(data), err)
+		return nil, derp.Wrap(err, "schema.NewFromJSON", "Error Unmarshalling JSON", string(data))
 	}
 
 	result, err := New(unmarshalled)
@@ -53,7 +53,7 @@ func NewFromJSON(data []byte) (Schema, *derp.Error) {
 }
 
 // New creates a new Schema object using a generic map
-func New(data map[string]interface{}) (Schema, *derp.Error) {
+func New(data map[string]interface{}) (Schema, error) {
 
 	var result Schema
 

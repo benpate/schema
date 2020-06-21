@@ -43,12 +43,12 @@ func (boolean *Boolean) Required() bool {
 }
 
 // Validate compares a generic data value using this Schema
-func (boolean *Boolean) Validate(data interface{}) *derp.Error {
+func (boolean *Boolean) Validate(data interface{}) error {
 	return nil
 }
 
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (boolean *Boolean) Path(path string) (Schema, *derp.Error) {
+func (boolean *Boolean) Path(path string) (Schema, error) {
 	return nil, derp.New(500, "schema.Boolean.Path", "Boolean values do not have additional properties")
 }
 
@@ -78,7 +78,7 @@ func (boolean *Boolean) UnmarshalJSON(data []byte) error {
 	var temp map[string]interface{}
 
 	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.New(500, "schema.Boolean.UnmarshalJSON", "Error Unmarshalling JSON", string(data), err)
+		return derp.Wrap(err, "schema.Boolean.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
 	}
 
 	boolean.Populate(temp)
