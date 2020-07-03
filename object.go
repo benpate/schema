@@ -1,9 +1,9 @@
 package schema
 
 import (
-	"encoding/json"
-	"strings"
+	"reflect"
 
+	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/list"
 )
@@ -58,8 +58,7 @@ func (object *Object) Validate(data interface{}) error {
 // Path uses JSON-Path notation to retrieve sub-items of this Schema
 func (object *Object) Path(path string) (Schema, error) {
 
-	path = strings.TrimPrefix(path, "#/")
-	head, tail := list.Split(path, "/")
+	head, tail := list.Split(path, ".")
 
 	if subObject, ok := object.properties[head]; ok {
 
@@ -79,20 +78,11 @@ func (object *Object) Path(path string) (Schema, error) {
 // Populate fills this object, using a generic data value
 func (object *Object) Populate(data map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		object.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		object.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		object.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		object.required = required
+	*object = Object{
+		id:          convert.String(data["$id"]),
+		comment:     convert.String(data["$comment"]),
+		description: convert.String(data["description"]),
+		required:    convert.Bool(data["required"]),
 	}
 
 	if properties, ok := data["properties"].(map[string]interface{}); ok {
@@ -111,15 +101,49 @@ func (object *Object) Populate(data map[string]interface{}) {
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (object *Object) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided data
+func (object *Object) Value(path string, data interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
+	// We're working in Generics, so we'll need reflect (hisss)
+	t := reflect.TypeOf(data)
 
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.Object.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// Fail if the data is not a map
+	if t.Kind() != reflect.Map {
+		return nil, derp.New(500, "schema.Object.Value", "Data does not match Schema.  Expected object type", path, data)
 	}
 
-	object.Populate(temp)
-	return nil
+	// If path is empty, we have arrived (but this would be weird)
+	if path == "" {
+		return data, nil
+	}
+
+	// Head will be the property name, and the tail will be any remaining data inside of that.
+	head, tail := list.Split(path, ".")
+
+	// Look for the property in the Schema
+	property, propertyOk := object.properties[head]
+
+	// Fail if the property is not defined in this schema
+	if !propertyOk {
+		return nil, derp.New(500, "schema.Object.Value", "Path does not match Schema.  Property not defined", path)
+	}
+
+	// Now we're ready to inspect the VALUE of the generic data we received.
+	v := reflect.ValueOf(data)
+
+	// Look up the value in the map
+	value := v.MapIndex(reflect.ValueOf(head))
+
+	// Fail if the value was not found in the map
+	if value.IsNil() {
+		return nil, derp.New(500, "schema.Object.Value", "Path does not match Schema.  Value not defined", path, data)
+	}
+
+	// If there is no more path to traverse, then we're done.
+	if tail == "" {
+		return value.Interface(), nil
+	}
+
+	// Fall through to here means that we need to keep digging in to the path recursively
+	return property.Value(tail, value.Interface())
 }

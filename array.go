@@ -1,9 +1,11 @@
 package schema
 
 import (
-	"encoding/json"
+	"reflect"
 
+	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/list"
 )
 
 // TypeArray is the token used by JSON-Schema to designate that a schema describes an array.
@@ -49,7 +51,30 @@ func (array *Array) Items() Schema {
 }
 
 // Validate compares a generic data value using this Schema
-func (array *Array) Validate(data interface{}) error {
+func (array *Array) Validate(value interface{}) error {
+
+	t := reflect.TypeOf(value)
+
+	if (t.Kind() != reflect.Array) && (t.Kind() != reflect.Slice) {
+		return derp.New(400, "schema.Array.Validate", "Value must be an array", value)
+	}
+
+	v := reflect.ValueOf(value)
+
+	length := v.Len()
+
+	if array.items == nil {
+		return nil
+	}
+
+	for index := 0; index < length; index = index + 1 {
+
+		item := v.Index(index).Interface()
+		if err := array.items.Validate(item); err != nil {
+			return derp.Wrap(err, "schema.Array.Validate", "Invalid array element", item)
+		}
+	}
+
 	return nil
 }
 
@@ -61,20 +86,11 @@ func (array *Array) Path(path string) (Schema, error) {
 // Populate fills this object, using a generic data value
 func (array *Array) Populate(data map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		array.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		array.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		array.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		array.required = required
+	*array = Array{
+		id:          convert.String(data["$id"]),
+		comment:     convert.String(data["$comment"]),
+		description: convert.String(data["description"]),
+		required:    convert.Bool(data["required"]),
 	}
 
 	if items, ok := data["items"].(map[string]interface{}); ok {
@@ -85,15 +101,55 @@ func (array *Array) Populate(data map[string]interface{}) {
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (array *Array) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided data
+func (array *Array) Value(path string, data interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
+	// We're working in Generics, so we'll need reflect (hisss)
+	t := reflect.TypeOf(data)
 
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.Array.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// If the data is not an array, then return an error
+	if t.Kind() != reflect.Array {
+		return nil, derp.New(500, "schema.Array.Value", "Data does not match Schema.  Expected array type", path, data)
 	}
 
-	array.Populate(temp)
-	return nil
+	// If path is empty, we have arrived (but this would be weird)
+	if path == "" {
+		return data, nil
+	}
+
+	// Fail if the item is not defined in the schema
+	if array.items == nil {
+		return nil, derp.New(500, "schema.Array.Value", "Invalid schema.  Array items not defined", path)
+	}
+
+	// Head will be the array index, and the tail will be any remaining data.
+	head, tail := list.Split(path, ".")
+
+	// Try to convert the array index to an integer
+	index, ok := convert.IntNatural(head, 0)
+
+	if !ok {
+		return nil, derp.New(500, "schema.Array.Value", "Invalid path.  Index must be an integer", path)
+	}
+
+	if index < 0 {
+		return nil, derp.New(500, "schema.Array.Value", "Invalid path.  Index must be >= 0", path)
+	}
+
+	// Now we're ready to inspect the VALUE of the generic data we received.
+	v := reflect.ValueOf(data)
+
+	if index >= v.Len() {
+		return nil, derp.New(500, "schema.Array.Value", "Invalid path.  Index is larger than array length", path)
+	}
+
+	value := v.Index(index).Interface()
+
+	// If there is no more path to traverse, then we're done.
+	if tail == "" {
+		return value, nil
+	}
+
+	// Fall through to here means that we need to keep digging in to the path recursively
+	return array.items.Value(tail, value)
 }

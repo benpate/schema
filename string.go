@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"encoding/json"
-
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 )
@@ -68,7 +66,41 @@ func (str *String) Pattern() string {
 }
 
 // Validate compares a generic data value using this Schema
-func (str *String) Validate(data interface{}) error {
+func (str *String) Validate(value interface{}) error {
+
+	// Try to convert the value to a string
+	stringValue, stringValueOk := value.(string)
+
+	// Fail if not a string
+	if !stringValueOk {
+		return derp.New(400, "schema.String.Validate", "must be a string", value)
+	}
+
+	// Fail if required value is not present
+	if str.required && (stringValue == "") {
+		return derp.New(400, "schema.String.Validate", "is required")
+	}
+
+	if str.minLength > 0 {
+		if len(stringValue) < str.minLength {
+			return derp.New(400, "schema.String.Validate", "Minimum length is", str.minLength)
+		}
+	}
+
+	if str.maxLength > 0 {
+		if len(stringValue) > str.maxLength {
+			return derp.New(400, "schema.String.Validate", "Maximum length is", str.maxLength)
+		}
+	}
+
+	if str.format != "" {
+		// TODO: check custom formats...
+	}
+
+	if str.pattern != "" {
+		// TODO: check custom patterns...
+	}
+
 	return nil
 }
 
@@ -77,51 +109,33 @@ func (str *String) Path(path string) (Schema, error) {
 	return nil, derp.New(500, "schema.String.Path", "String values do not have additional properties")
 }
 
-// Populate fills this object, using a generic data value
-func (str *String) Populate(data map[string]interface{}) {
+// Populate fills this object, using a generic value
+func (str *String) Populate(value map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		str.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		str.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		str.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		str.required = required
-	}
-
-	if format, ok := data["format"].(string); ok {
-		str.format = format
-	}
-
-	if minLength, err := convert.Int(data["minLength"]); err == nil {
-		str.minLength = minLength
-	}
-
-	if maxLength, err := convert.Int(data["maxLength"]); err == nil {
-		str.maxLength = maxLength
-	}
-
-	if pattern, ok := data["pattern"].(string); ok {
-		str.pattern = pattern
+	*str = String{
+		id:          convert.String(value["$id"]),
+		comment:     convert.String(value["$comment"]),
+		description: convert.String(value["description"]),
+		required:    convert.Bool(value["required"]),
+		format:      convert.String(value["format"]),
+		minLength:   convert.Int(value["minLength"]),
+		maxLength:   convert.Int(value["maxLength"]),
+		pattern:     convert.String(value["pattern"]),
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (str *String) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided value
+func (str *String) Value(path string, value interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.String.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// String is a terminal type, so there should be no other items beneath this
+	if path != "" {
+		return nil, derp.New(500, "schema.String.Value", "Path must be empty", path, value)
 	}
 
-	str.Populate(temp)
-	return nil
+	// If the value can be converted to a string, then success
+	if result, ok := convert.StringNatural(value, ""); ok {
+		return result, nil
+	}
+
+	return nil, derp.New(500, "schema.String.Value", "Cannot convert data to string", value)
 }

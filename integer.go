@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"encoding/json"
-
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 )
@@ -74,44 +72,29 @@ func (integer *Integer) Path(path string) (Schema, error) {
 // Populate fills this object, using a generic data value
 func (integer *Integer) Populate(data map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		integer.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		integer.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		integer.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		integer.required = required
-	}
-
-	if minimum, err := convert.Int(data["minimum"]); err == nil {
-		integer.minimum = minimum
-	}
-
-	if maximum, err := convert.Int(data["maximum"]); err == nil {
-		integer.maximum = maximum
-	}
-
-	if multipleOf, err := convert.Int(data["multipleOf"]); err == nil {
-		integer.multipleOf = multipleOf
+	*integer = Integer{
+		id:          convert.String(data["$id"]),
+		comment:     convert.String(data["$comment"]),
+		description: convert.String(data["description"]),
+		required:    convert.Bool(data["required"]),
+		minimum:     convert.Int(data["minimum"]),
+		maximum:     convert.Int(data["maximum"]),
+		multipleOf:  convert.Int(data["multipleOf"]),
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (integer *Integer) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided data
+func (integer *Integer) Value(path string, data interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.Integer.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// Integer is a terminal type, so there should be no other items beneath this
+	if path != "" {
+		return nil, derp.New(500, "schema.Integer.Value", "Path must be empty", path, data)
 	}
 
-	integer.Populate(temp)
-	return nil
+	// If the data can be converted to a string, then success
+	if result, ok := convert.IntNatural(data, 0); ok {
+		return result, nil
+	}
+
+	return nil, derp.New(500, "schema.Integer.Value", "Cannot convert data to string", data)
 }

@@ -1,8 +1,7 @@
 package schema
 
 import (
-	"encoding/json"
-
+	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 )
 
@@ -46,7 +45,33 @@ func (number *Number) Required() bool {
 }
 
 // Validate compares a generic data value using this Schema
-func (number *Number) Validate(data interface{}) error {
+func (number *Number) Validate(value interface{}) error {
+
+	// Try to convert the value to a string
+	numberValue, numberValueOk := convert.Float64Natural(value, 0)
+
+	// Fail if not a number
+	if !numberValueOk {
+		return derp.New(500, "schema.String.Validate", "must be a number", value)
+	}
+
+	// Fail if required value is not present
+	if number.required && (numberValue == 0) {
+		return derp.New(500, "schema.String.Validate", "is required")
+	}
+
+	if number.minimum > 0 {
+		if numberValue < number.minimum {
+			return derp.New(500, "schema.String.Validate", "Minimum is", number.minimum)
+		}
+	}
+
+	if number.maximum > 0 {
+		if numberValue > number.maximum {
+			return derp.New(500, "schema.String.Validate", "Maximum is", number.maximum)
+		}
+	}
+
 	return nil
 }
 
@@ -58,44 +83,29 @@ func (number *Number) Path(path string) (Schema, error) {
 // Populate fills this object, using a generic data value
 func (number *Number) Populate(data map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		number.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		number.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		number.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		number.required = required
-	}
-
-	if minimum, ok := data["minimum"].(float64); ok {
-		number.minimum = minimum
-	}
-
-	if maximum, ok := data["maximum"].(float64); ok {
-		number.maximum = maximum
-	}
-
-	if multipleOf, ok := data["multipleOf"].(int); ok {
-		number.multipleOf = multipleOf
+	*number = Number{
+		id:          convert.String(data["$id"]),
+		comment:     convert.String(data["$comment"]),
+		description: convert.String(data["description"]),
+		required:    convert.Bool(data["required"]),
+		minimum:     convert.Float64(data["minimum"]),
+		maximum:     convert.Float64(data["maximum"]),
+		multipleOf:  convert.Int(data["multipleOf"]),
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (number *Number) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided data
+func (number *Number) Value(path string, data interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.Number.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// Number is a terminal type, so there should be no other items beneath this
+	if path != "" {
+		return nil, derp.New(500, "schema.Number.Value", "Path must be empty", path, data)
 	}
 
-	number.Populate(temp)
-	return nil
+	// If the data can be converted to a string, then success
+	if result, ok := convert.Float64Natural(data, 0); ok {
+		return result, nil
+	}
+
+	return nil, derp.New(500, "schema.Number.Value", "Cannot convert data to string", data)
 }

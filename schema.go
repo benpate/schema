@@ -32,6 +32,9 @@ type Schema interface {
 
 	// Path retrieves sub-items in the schema
 	Path(string) (Schema, error)
+
+	// Value uses the provided path string to retrieve a data value from a generic data source
+	Value(string, interface{}) (interface{}, error)
 }
 
 // NewFromJSON creates a new Schema object using a JSON-serialized byte array.

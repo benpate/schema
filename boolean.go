@@ -1,8 +1,7 @@
 package schema
 
 import (
-	"encoding/json"
-
+	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 )
 
@@ -55,32 +54,26 @@ func (boolean *Boolean) Path(path string) (Schema, error) {
 // Populate fills this object, using a generic data value
 func (boolean *Boolean) Populate(data map[string]interface{}) {
 
-	if id, ok := data["$id"].(string); ok {
-		boolean.id = id
-	}
-
-	if comment, ok := data["$comment"].(string); ok {
-		boolean.comment = comment
-	}
-
-	if description, ok := data["description"].(string); ok {
-		boolean.description = description
-	}
-
-	if required, ok := data["required"].(bool); ok {
-		boolean.required = required
+	*boolean = Boolean{
+		id:          convert.String(data["$id"]),
+		comment:     convert.String(data["$comment"]),
+		description: convert.String(data["description"]),
+		required:    convert.Bool(data["required"]),
 	}
 }
 
-// UnmarshalJSON fulfils the json.Unmarshaller interface
-func (boolean *Boolean) UnmarshalJSON(data []byte) error {
+// Value retrieves the value of the path that matches the provided data
+func (boolean *Boolean) Value(path string, data interface{}) (interface{}, error) {
 
-	var temp map[string]interface{}
-
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return derp.Wrap(err, "schema.Boolean.UnmarshalJSON", "Error Unmarshalling JSON", string(data))
+	// Boolean is a terminal type, so there should be no other items beneath this
+	if path != "" {
+		return nil, derp.New(500, "schema.Boolean.Value", "Path must be empty", path, data)
 	}
 
-	boolean.Populate(temp)
-	return nil
+	// If the data can be converted to a string, then success
+	if result, ok := convert.BoolNatural(data, false); ok {
+		return result, nil
+	}
+
+	return nil, derp.New(500, "schema.Boolean.Value", "Cannot convert data to string", data)
 }
