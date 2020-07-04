@@ -8,7 +8,9 @@ import (
 
 func TestArrayValidation(t *testing.T) {
 
-	s := &Array{items: &String{maxLength: 10}}
+	s := &Array{
+		Items: String{MaxLength: 10},
+	}
 
 	{
 		v := []string{"one", "two", "three", "valid"}

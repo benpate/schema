@@ -3,98 +3,59 @@ package schema
 import (
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/null"
 )
-
-// TypeInteger is the token used by JSON-Schema to designate that a schema describes an integer.
-const TypeInteger = "integer"
 
 // Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
-	id          string
-	comment     string
-	description string
-	required    bool
-	minimum     int
-	maximum     int
-	multipleOf  int
+	ID          string
+	Comment     string
+	Description string
+	Required    bool
+	Minimum     null.Int
+	Maximum     null.Int
+	MultipleOf  null.Int
 }
 
 // Type returns the data type of this Schema
-func (integer *Integer) Type() string {
-	return TypeInteger
-}
-
-// ID returns the unique identifier of this Schema
-func (integer *Integer) ID() string {
-	return integer.id
-}
-
-// Comment returns the comment for this Schema
-func (integer *Integer) Comment() string {
-	return integer.comment
-}
-
-// Description returns the description of this Schema
-func (integer *Integer) Description() string {
-	return integer.description
-}
-
-// Required returns the TRUE if this value is required by the schema
-func (integer *Integer) Required() bool {
-	return integer.required
-}
-
-// Minimum returns the minimum value of this item
-func (integer *Integer) Minimum() int {
-	return integer.minimum
-}
-
-// Maximum returns the maximum value of this item
-func (integer *Integer) Maximum() int {
-	return integer.maximum
-}
-
-// MultipleOf returns the multipleOf value for this schema
-func (integer *Integer) MultipleOf() int {
-	return integer.multipleOf
+func (integer Integer) Type() SchemaType {
+	return SchemaTypeInteger
 }
 
 // Validate compares a generic data value using this Schema
-func (integer *Integer) Validate(data interface{}) error {
+func (integer Integer) Validate(value interface{}) error {
+
+	// Try to convert the value to a string
+	intValue, intValueOk := convert.IntOk(value, 0)
+
+	// Fail if not a number
+	if !intValueOk {
+		return derp.New(500, "schema.Int.Validate", "must be a number", value)
+	}
+
+	// Fail if required value is not present
+	if integer.Required && (intValue == 0) {
+		return derp.New(500, "schema.Int.Validate", "is required")
+	}
+
+	if integer.Minimum.IsPresent() {
+		if intValue < integer.Minimum.Int() {
+			return derp.New(500, "schema.Int.Validate", "Minimum is", integer.Minimum)
+		}
+	}
+
+	if integer.Maximum.IsPresent() {
+		if intValue > integer.Maximum.Int() {
+			return derp.New(500, "schema.Int.Validate", "Maximum is", integer.Maximum)
+		}
+	}
+
+	if integer.MultipleOf.IsPresent() {
+		if (intValue % integer.MultipleOf.Int()) != 0 {
+			return derp.New(500, "schema.Int.Validate", "Mustbe a multiple of ", integer.MultipleOf)
+		}
+	}
+
 	return nil
-}
 
-// Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (integer *Integer) Path(path string) (Schema, error) {
-	return nil, derp.New(500, "schema.Integer.Path", "Integer values do not have additional properties")
-}
-
-// Populate fills this object, using a generic data value
-func (integer *Integer) Populate(data map[string]interface{}) {
-
-	*integer = Integer{
-		id:          convert.String(data["$id"]),
-		comment:     convert.String(data["$comment"]),
-		description: convert.String(data["description"]),
-		required:    convert.Bool(data["required"]),
-		minimum:     convert.Int(data["minimum"]),
-		maximum:     convert.Int(data["maximum"]),
-		multipleOf:  convert.Int(data["multipleOf"]),
-	}
-}
-
-// Value retrieves the value of the path that matches the provided data
-func (integer *Integer) Value(path string, data interface{}) (interface{}, error) {
-
-	// Integer is a terminal type, so there should be no other items beneath this
-	if path != "" {
-		return nil, derp.New(500, "schema.Integer.Value", "Path must be empty", path, data)
-	}
-
-	// If the data can be converted to a string, then success
-	if result, ok := convert.IntNatural(data, 0); ok {
-		return result, nil
-	}
-
-	return nil, derp.New(500, "schema.Integer.Value", "Cannot convert data to string", data)
 }

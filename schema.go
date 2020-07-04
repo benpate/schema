@@ -3,38 +3,21 @@ package schema
 import (
 	"encoding/json"
 
+	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 )
 
 // Schema interface
 type Schema interface {
 
-	// ID provides a standard way to retrieve a Schema's ID
-	ID() string
-
-	// Comment provides a standard way to retrieve a Schema's Comment
-	Comment() string
-
-	// Description provides a standard way to retrieve a Schema's Description
-	Description() string
-
-	// Type provides a standard way to retrieve a Schema's Type
-	Type() string
-
-	// Required provides a standard way to tell if a Schema value is required or not.
-	Required() bool
-
-	// Populate uses a generic map to fill the schema object
-	Populate(map[string]interface{})
+	// Type returns the SchemaType of this particular schema element
+	Type() SchemaType
 
 	// Validate checks an arbitrary data structure against the rules in the schema
 	Validate(interface{}) error
 
-	// Path retrieves sub-items in the schema
-	Path(string) (Schema, error)
-
-	// Value uses the provided path string to retrieve a data value from a generic data source
-	Value(string, interface{}) (interface{}, error)
+	// ValidatePath verifies that the provided path matches this schema
+	// ValidatePath(path.Path) error
 }
 
 // NewFromJSON creates a new Schema object using a JSON-serialized byte array.
@@ -58,33 +41,106 @@ func NewFromJSON(data []byte) (Schema, error) {
 // New creates a new Schema object using a generic map
 func New(data map[string]interface{}) (Schema, error) {
 
-	var result Schema
-
 	switch data["type"] {
-	case TypeArray:
-		result = &Array{}
 
-	case TypeBoolean:
-		result = &Boolean{}
+	case SchemaTypeArray:
 
-	case TypeInteger:
-		result = &Integer{}
+		array := Array{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+		}
 
-	case TypeNumber:
-		result = &Number{}
+		if items, ok := data["items"].(map[string]interface{}); ok {
+
+			if object, err := New(items); err == nil {
+				array.Items = object
+			}
+		}
+
+		return array, nil
+
+	case SchemaTypeBoolean:
+
+		boolean := Boolean{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+		}
+
+		return boolean, nil
+
+	case SchemaTypeInteger:
+
+		integer := Integer{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+			Minimum:     convert.NullInt(data["minimum"]),
+			Maximum:     convert.NullInt(data["maximum"]),
+			MultipleOf:  convert.NullInt(data["multipleOf"]),
+		}
+
+		return integer, nil
+
+	case SchemaTypeNumber:
+
+		number := Number{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+			Minimum:     convert.NullFloat(data["minimum"]),
+			Maximum:     convert.NullFloat(data["maximum"]),
+		}
+
+		return number, nil
 
 	case TypeObject:
-		result = &Object{}
+
+		object := Object{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+		}
+
+		if properties, ok := data["properties"].(map[string]interface{}); ok {
+
+			object.Properties = make(map[string]Schema, len(properties))
+
+			for key, value := range properties {
+
+				if propertyMap, ok := value.(map[string]interface{}); ok {
+
+					if propertyObject, err := New(propertyMap); err == nil {
+						object.Properties[key] = propertyObject
+					}
+				}
+			}
+		}
+
+		return object, nil
 
 	case TypeString:
-		result = &String{}
 
-	default:
-		return nil, derp.New(500, "schema.New", "Unrecognized data type", data)
+		s := String{
+			ID:          convert.String(data["$id"]),
+			Comment:     convert.String(data["$comment"]),
+			Description: convert.String(data["description"]),
+			Required:    convert.Bool(data["required"]),
+			Format:      convert.String(data["format"]),
+			MinLength:   convert.Int(data["minLength"]),
+			MaxLength:   convert.Int(data["maxLength"]),
+			Pattern:     convert.String(data["pattern"]),
+		}
+
+		return s, nil
+
 	}
 
-	// Continue here to populate the result
-	result.Populate(data)
-
-	return result, nil
+	return nil, derp.New(500, "schema.New", "Unrecognized data type", data)
 }
