@@ -4,6 +4,7 @@ import (
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
+	"github.com/benpate/path"
 )
 
 // Number represents a number data type within a JSON-Schema.
@@ -19,6 +20,16 @@ type Number struct {
 // Type returns the data type of this Schema
 func (number Number) Type() Type {
 	return TypeNumber
+}
+
+// Path returns sub-schemas
+func (number Number) Path(p path.Path) (Schema, error) {
+
+	if p.IsEmpty() {
+		return number, nil
+	}
+
+	return nil, derp.New(500, "schema.Number.GetPath", "Number values have no child elements.  Path must terminate.", p)
 }
 
 // Validate compares a generic data value using this Schema

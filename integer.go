@@ -4,6 +4,7 @@ import (
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
+	"github.com/benpate/path"
 )
 
 // Integer represents an integer data type within a JSON-Schema.
@@ -20,6 +21,16 @@ type Integer struct {
 // Type returns the data type of this Schema
 func (integer Integer) Type() Type {
 	return TypeInteger
+}
+
+// Path returns sub-schemas
+func (integer Integer) Path(p path.Path) (Schema, error) {
+
+	if p.IsEmpty() {
+		return integer, nil
+	}
+
+	return nil, derp.New(500, "schema.Integer.GetPath", "Integer values have no child elements.  Path must terminate.", p)
 }
 
 // Validate compares a generic data value using this Schema

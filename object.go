@@ -1,6 +1,9 @@
 package schema
 
-import "github.com/benpate/derp"
+import (
+	"github.com/benpate/derp"
+	"github.com/benpate/path"
+)
 
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
@@ -14,6 +17,22 @@ type Object struct {
 // Type returns the data type of this Schema
 func (object Object) Type() Type {
 	return TypeObject
+}
+
+// Path returns sub-schemas
+func (object Object) Path(p path.Path) (Schema, error) {
+
+	if p.IsEmpty() {
+		return object, nil
+	}
+
+	key := p.Head()
+
+	if property, ok := object.Properties[key]; ok {
+		return property.Path(p.Tail())
+	}
+
+	return nil, derp.New(500, "schema.Object.GetPath", "Property not defined", object, p)
 }
 
 // Validate compares a generic data value using this Schema

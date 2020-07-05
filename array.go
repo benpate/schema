@@ -5,6 +5,7 @@ import (
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/path"
 )
 
 // Array represents an array data type within a JSON-Schema.
@@ -19,6 +20,16 @@ type Array struct {
 // Type returns the data type of this Schema
 func (array Array) Type() Type {
 	return TypeArray
+}
+
+// Path returns sub-schemas of this array.
+func (array Array) Path(p path.Path) (Schema, error) {
+
+	if p.IsEmpty() {
+		return array, nil
+	}
+
+	return array.Items.Path(p)
 }
 
 // Validate compares a generic data value using this Schema
@@ -47,11 +58,6 @@ func (array Array) Validate(value interface{}) error {
 	}
 
 	return nil
-}
-
-// Path uses JSON-Path notation to retrieve sub-items of this Schema
-func (array *Array) Path(path string) (Schema, error) {
-	return array.Items, nil
 }
 
 // UnmarshalMap fills this object, using a generic data value

@@ -5,6 +5,7 @@ import (
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/path"
 )
 
 // Schema interface
@@ -15,6 +16,9 @@ type Schema interface {
 
 	// Validate checks an arbitrary data structure against the rules in the schema
 	Validate(interface{}) error
+
+	// Path traverses this schema to find child element that matches the provided path
+	Path(path.Path) (Schema, error)
 
 	// ValidatePath verifies that the provided path matches this schema
 	// ValidatePath(path.Path) error

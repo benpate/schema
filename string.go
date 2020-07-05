@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/benpate/derp"
+	"github.com/benpate/path"
 )
 
 // String represents a string data type within a JSON-Schema.
@@ -19,6 +20,16 @@ type String struct {
 // Type returns the data type of this Schema
 func (str String) Type() Type {
 	return TypeString
+}
+
+// Path returns sub-schemas or an error
+func (str String) Path(p path.Path) (Schema, error) {
+
+	if p.IsEmpty() {
+		return str, nil
+	}
+
+	return nil, derp.New(500, "schema.String.GetPath", "String values have no child elements.  Path must terminate.", p)
 }
 
 // Validate compares a generic data value using this Schema
