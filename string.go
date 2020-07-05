@@ -2,19 +2,21 @@ package schema
 
 import (
 	"github.com/benpate/derp"
+	"github.com/benpate/null"
 	"github.com/benpate/path"
 )
 
 // String represents a string data type within a JSON-Schema.
 type String struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Format      string
-	MinLength   int
-	MaxLength   int
-	Pattern     string
+	ID           string
+	Comment      string
+	Description  string
+	Required     bool
+	DefaultValue string
+	MinLength    null.Int
+	MaxLength    null.Int
+	Pattern      string
+	Format       string
 }
 
 // Type returns the data type of this Schema
@@ -48,14 +50,14 @@ func (str String) Validate(value interface{}) error {
 		return derp.New(400, "schema.String.Validate", "is required")
 	}
 
-	if str.MinLength > 0 {
-		if len(stringValue) < str.MinLength {
+	if str.MinLength.IsPresent() {
+		if len(stringValue) < str.MinLength.Int() {
 			return derp.New(400, "schema.String.Validate", "Minimum length is", str.MinLength)
 		}
 	}
 
-	if str.MaxLength > 0 {
-		if len(stringValue) > str.MaxLength {
+	if str.MaxLength.IsPresent() {
+		if len(stringValue) > str.MaxLength.Int() {
 			return derp.New(400, "schema.String.Validate", "Maximum length is", str.MaxLength)
 		}
 	}

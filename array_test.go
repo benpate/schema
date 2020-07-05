@@ -3,13 +3,14 @@ package schema
 import (
 	"testing"
 
+	"github.com/benpate/null"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestArrayValidation(t *testing.T) {
 
 	s := &Array{
-		Items: String{MaxLength: 10},
+		Items: String{MaxLength: null.NewInt(10)},
 	}
 
 	{
