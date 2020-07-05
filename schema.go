@@ -45,7 +45,7 @@ func NewFromJSON(data []byte) (Schema, error) {
 // New creates a new Schema object using a generic map
 func New(data map[string]interface{}) (Schema, error) {
 
-	switch data["type"] {
+	switch Type(convert.String(data["type"])) {
 
 	case TypeArray:
 
