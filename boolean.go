@@ -3,6 +3,7 @@ package schema
 import (
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/null"
 	"github.com/benpate/path"
 )
 
@@ -12,6 +13,7 @@ type Boolean struct {
 	Comment     string
 	Description string
 	Required    bool
+	Default     null.Bool
 }
 
 // Type returns the data type of this Schema

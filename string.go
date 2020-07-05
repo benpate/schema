@@ -8,15 +8,15 @@ import (
 
 // String represents a string data type within a JSON-Schema.
 type String struct {
-	ID           string
-	Comment      string
-	Description  string
-	Required     bool
-	DefaultValue string
-	MinLength    null.Int
-	MaxLength    null.Int
-	Pattern      string
-	Format       string
+	ID          string
+	Comment     string
+	Description string
+	Required    bool
+	Default     string
+	MinLength   null.Int
+	MaxLength   null.Int
+	Pattern     string
+	Format      string
 }
 
 // Type returns the data type of this Schema

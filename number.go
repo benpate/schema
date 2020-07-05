@@ -13,6 +13,7 @@ type Number struct {
 	Comment     string
 	Description string
 	Required    bool
+	Default     null.Float
 	Minimum     null.Float
 	Maximum     null.Float
 }

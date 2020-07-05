@@ -13,6 +13,7 @@ type Integer struct {
 	Comment     string
 	Description string
 	Required    bool
+	Default     null.Int
 	Minimum     null.Int
 	Maximum     null.Int
 	MultipleOf  null.Int
