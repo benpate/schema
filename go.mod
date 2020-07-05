@@ -6,6 +6,6 @@ require (
 	github.com/benpate/convert v0.7.0
 	github.com/benpate/derp v0.11.0
 	github.com/benpate/null v0.2.0
-	github.com/benpate/path v0.1.0
+	github.com/benpate/path v0.1.1
 	github.com/stretchr/testify v1.6.1
 )
