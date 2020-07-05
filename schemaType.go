@@ -1,27 +1,27 @@
 package schema
 
-// SchemaType enumerates all of the data types that can make up a schema
-type SchemaType string
+// Type enumerates all of the data types that can make up a schema
+type Type string
 
 // String implements the ubiquitous "Stringer" interface, so that these types can be represented as strings, if necessary
-func (schemaType SchemaType) String() string {
+func (schemaType Type) String() string {
 	return string(schemaType)
 }
 
-// SchemaTypeArray is the token used by JSON-Schema to designate that a schema describes an array.
-const SchemaTypeArray = SchemaType("array")
+// TypeArray is the token used by JSON-Schema to designate that a schema describes an array.
+const TypeArray = Type("array")
 
-// SchemaTypeBoolean is the token used by JSON-Schema to designate that a schema describes an boolean.
-const SchemaTypeBoolean = SchemaType("boolean")
+// TypeBoolean is the token used by JSON-Schema to designate that a schema describes an boolean.
+const TypeBoolean = Type("boolean")
 
-// SchemaTypeInteger is the token used by JSON-Schema to designate that a schema describes an integer.
-const SchemaTypeInteger = SchemaType("integer")
+// TypeInteger is the token used by JSON-Schema to designate that a schema describes an integer.
+const TypeInteger = Type("integer")
 
-// SchemaTypeNumber is the token used by JSON-Schema to designate that a schema describes an number.
-const SchemaTypeNumber = SchemaType("number")
+// TypeNumber is the token used by JSON-Schema to designate that a schema describes an number.
+const TypeNumber = Type("number")
 
-// SchemaTypeObject is the token used by JSON-Schema to designate that a schema describes an object.
-const SchemaTypeObject = SchemaType("object")
+// TypeObject is the token used by JSON-Schema to designate that a schema describes an object.
+const TypeObject = Type("object")
 
-// SchemaTypeString is the token used by JSON-Schema to designate that a schema describes an string.
-const SchemaTypeString = SchemaType("string")
+// TypeString is the token used by JSON-Schema to designate that a schema describes an string.
+const TypeString = Type("string")

@@ -10,8 +10,8 @@ import (
 // Schema interface
 type Schema interface {
 
-	// Type returns the SchemaType of this particular schema element
-	Type() SchemaType
+	// Type returns the Type of this particular schema element
+	Type() Type
 
 	// Validate checks an arbitrary data structure against the rules in the schema
 	Validate(interface{}) error
@@ -43,7 +43,7 @@ func New(data map[string]interface{}) (Schema, error) {
 
 	switch data["type"] {
 
-	case SchemaTypeArray:
+	case TypeArray:
 
 		array := Array{
 			ID:          convert.String(data["$id"]),
@@ -61,7 +61,7 @@ func New(data map[string]interface{}) (Schema, error) {
 
 		return array, nil
 
-	case SchemaTypeBoolean:
+	case TypeBoolean:
 
 		boolean := Boolean{
 			ID:          convert.String(data["$id"]),
@@ -72,7 +72,7 @@ func New(data map[string]interface{}) (Schema, error) {
 
 		return boolean, nil
 
-	case SchemaTypeInteger:
+	case TypeInteger:
 
 		integer := Integer{
 			ID:          convert.String(data["$id"]),
@@ -86,7 +86,7 @@ func New(data map[string]interface{}) (Schema, error) {
 
 		return integer, nil
 
-	case SchemaTypeNumber:
+	case TypeNumber:
 
 		number := Number{
 			ID:          convert.String(data["$id"]),

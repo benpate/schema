@@ -14,8 +14,8 @@ type Boolean struct {
 }
 
 // Type returns the data type of this Schema
-func (boolean Boolean) Type() SchemaType {
-	return SchemaTypeBoolean
+func (boolean Boolean) Type() Type {
+	return TypeBoolean
 }
 
 // Validate compares a generic data value using this Schema

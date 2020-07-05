@@ -6,9 +6,6 @@ import (
 	"github.com/benpate/null"
 )
 
-// TypeNumber is the token used by JSON-Schema to designate that a schema describes an number.
-const TypeNumber = "number"
-
 // Number represents a number data type within a JSON-Schema.
 type Number struct {
 	ID          string
@@ -20,8 +17,8 @@ type Number struct {
 }
 
 // Type returns the data type of this Schema
-func (number Number) Type() SchemaType {
-	return SchemaTypeNumber
+func (number Number) Type() Type {
+	return TypeNumber
 }
 
 // Validate compares a generic data value using this Schema

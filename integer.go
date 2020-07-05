@@ -18,8 +18,8 @@ type Integer struct {
 }
 
 // Type returns the data type of this Schema
-func (integer Integer) Type() SchemaType {
-	return SchemaTypeInteger
+func (integer Integer) Type() Type {
+	return TypeInteger
 }
 
 // Validate compares a generic data value using this Schema

@@ -2,9 +2,6 @@ package schema
 
 import "github.com/benpate/derp"
 
-// TypeObject is the token used by JSON-Schema to designate that a schema describes an object.
-const TypeObject = "object"
-
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
 	ID          string
@@ -15,8 +12,8 @@ type Object struct {
 }
 
 // Type returns the data type of this Schema
-func (object Object) Type() SchemaType {
-	return SchemaTypeObject
+func (object Object) Type() Type {
+	return TypeObject
 }
 
 // Validate compares a generic data value using this Schema

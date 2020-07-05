@@ -4,9 +4,6 @@ import (
 	"github.com/benpate/derp"
 )
 
-// TypeString is the token used by JSON-Schema to designate that a schema describes an string.
-const TypeString = "string"
-
 // String represents a string data type within a JSON-Schema.
 type String struct {
 	ID          string
@@ -20,8 +17,8 @@ type String struct {
 }
 
 // Type returns the data type of this Schema
-func (str String) Type() SchemaType {
-	return SchemaTypeString
+func (str String) Type() Type {
+	return TypeString
 }
 
 // Validate compares a generic data value using this Schema

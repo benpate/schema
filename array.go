@@ -17,8 +17,8 @@ type Array struct {
 }
 
 // Type returns the data type of this Schema
-func (array Array) Type() SchemaType {
-	return SchemaTypeArray
+func (array Array) Type() Type {
+	return TypeArray
 }
 
 // Validate compares a generic data value using this Schema
