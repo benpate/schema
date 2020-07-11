@@ -8,6 +8,9 @@ func (schemaType Type) String() string {
 	return string(schemaType)
 }
 
+// TypeAny is the token used by JSON-Schema to designate that any kind of data
+const TypeAny = Type("any")
+
 // TypeArray is the token used by JSON-Schema to designate that a schema describes an array.
 const TypeArray = Type("array")
 
