@@ -50,10 +50,9 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeArray:
 
 		array := Array{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
+			ID:       convert.String(data["$id"]),
+			Comment:  convert.String(data["$comment"]),
+			Required: convert.Bool(data["required"]),
 		}
 
 		if items, ok := data["items"].(map[string]interface{}); ok {
@@ -68,11 +67,10 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeBoolean:
 
 		boolean := Boolean{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
-			Default:     convert.NullBool(data["default"]),
+			ID:       convert.String(data["$id"]),
+			Comment:  convert.String(data["$comment"]),
+			Required: convert.Bool(data["required"]),
+			Default:  convert.NullBool(data["default"]),
 		}
 
 		return boolean, nil
@@ -80,14 +78,13 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeInteger:
 
 		integer := Integer{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
-			Default:     convert.NullInt(data["default"]),
-			Minimum:     convert.NullInt(data["minimum"]),
-			Maximum:     convert.NullInt(data["maximum"]),
-			MultipleOf:  convert.NullInt(data["multipleOf"]),
+			ID:         convert.String(data["$id"]),
+			Comment:    convert.String(data["$comment"]),
+			Required:   convert.Bool(data["required"]),
+			Default:    convert.NullInt(data["default"]),
+			Minimum:    convert.NullInt(data["minimum"]),
+			Maximum:    convert.NullInt(data["maximum"]),
+			MultipleOf: convert.NullInt(data["multipleOf"]),
 		}
 
 		return integer, nil
@@ -95,13 +92,12 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeNumber:
 
 		number := Number{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
-			Default:     convert.NullFloat(data["default"]),
-			Minimum:     convert.NullFloat(data["minimum"]),
-			Maximum:     convert.NullFloat(data["maximum"]),
+			ID:       convert.String(data["$id"]),
+			Comment:  convert.String(data["$comment"]),
+			Required: convert.Bool(data["required"]),
+			Default:  convert.NullFloat(data["default"]),
+			Minimum:  convert.NullFloat(data["minimum"]),
+			Maximum:  convert.NullFloat(data["maximum"]),
 		}
 
 		return number, nil
@@ -109,10 +105,9 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeObject:
 
 		object := Object{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
+			ID:       convert.String(data["$id"]),
+			Comment:  convert.String(data["$comment"]),
+			Required: convert.Bool(data["required"]),
 		}
 
 		if properties, ok := data["properties"].(map[string]interface{}); ok {
@@ -135,15 +130,14 @@ func New(data map[string]interface{}) (Schema, error) {
 	case TypeString:
 
 		s := String{
-			ID:          convert.String(data["$id"]),
-			Comment:     convert.String(data["$comment"]),
-			Description: convert.String(data["description"]),
-			Required:    convert.Bool(data["required"]),
-			Default:     convert.String(data["default"]),
-			Format:      convert.String(data["format"]),
-			MinLength:   convert.NullInt(data["minLength"]),
-			MaxLength:   convert.NullInt(data["maxLength"]),
-			Pattern:     convert.String(data["pattern"]),
+			ID:        convert.String(data["$id"]),
+			Comment:   convert.String(data["$comment"]),
+			Required:  convert.Bool(data["required"]),
+			Default:   convert.String(data["default"]),
+			Format:    convert.String(data["format"]),
+			MinLength: convert.NullInt(data["minLength"]),
+			MaxLength: convert.NullInt(data["maxLength"]),
+			Pattern:   convert.String(data["pattern"]),
 		}
 
 		return s, nil

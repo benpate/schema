@@ -9,11 +9,10 @@ import (
 
 // Boolean represents a boolean data type within a JSON-Schema.
 type Boolean struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Default     null.Bool
+	ID       string    `json:"$id"`
+	Comment  string    `json:"$comment"`
+	Required bool      `json:"required"`
+	Default  null.Bool `json:"default"`
 }
 
 // Type returns the data type of this Schema

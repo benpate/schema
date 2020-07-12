@@ -7,9 +7,8 @@ import (
 
 // Any represents a any data type within a JSON-Schema.
 type Any struct {
-	ID          string
-	Comment     string
-	Description string
+	ID      string `json:"$id"`
+	Comment string `json:"$comment"`
 }
 
 // Type returns the data type of this Schema

@@ -9,13 +9,12 @@ import (
 
 // Number represents a number data type within a JSON-Schema.
 type Number struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Default     null.Float
-	Minimum     null.Float
-	Maximum     null.Float
+	ID       string     `json:"$id"`
+	Comment  string     `json:"$comment"`
+	Required bool       `json:"required"`
+	Default  null.Float `json:"default"`
+	Minimum  null.Float `json:"minimum"`
+	Maximum  null.Float `json:"maximum"`
 }
 
 // Type returns the data type of this Schema

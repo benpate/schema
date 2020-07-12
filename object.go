@@ -7,11 +7,10 @@ import (
 
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Properties  map[string]Schema
+	ID         string `json:"$id"`
+	Comment    string `json:"$comment"`
+	Required   bool
+	Properties map[string]Schema
 }
 
 // Type returns the data type of this Schema

@@ -9,14 +9,13 @@ import (
 
 // Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Default     null.Int
-	Minimum     null.Int
-	Maximum     null.Int
-	MultipleOf  null.Int
+	ID         string   `json:"$id"`
+	Comment    string   `json:"$comment"`
+	Required   bool     `json:"required"`
+	Default    null.Int `json:"default"`
+	Minimum    null.Int `json:"minimum"`
+	Maximum    null.Int `json:"maximum"`
+	MultipleOf null.Int `json:"multipleOf"`
 }
 
 // Type returns the data type of this Schema

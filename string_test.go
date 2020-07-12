@@ -30,7 +30,6 @@ func TestStringUnmarshalComplete(t *testing.T) {
 	str := st.(String)
 	assert.Equal(t, str.ID, "example.com/example")
 	assert.Equal(t, str.Comment, "foo")
-	assert.Equal(t, str.Description, "Example String Schema")
 	assert.Equal(t, str.MinLength, null.NewInt(10))
 	assert.Equal(t, str.MaxLength, null.NewInt(100))
 	assert.Equal(t, str.Required, true)

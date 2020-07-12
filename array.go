@@ -3,18 +3,16 @@ package schema
 import (
 	"reflect"
 
-	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/path"
 )
 
 // Array represents an array data type within a JSON-Schema.
 type Array struct {
-	ID          string
-	Comment     string
-	Description string
-	Required    bool
-	Items       Schema
+	ID       string `json:"$id"`
+	Comment  string `json:"$comment"`
+	Required bool
+	Items    Schema
 }
 
 // Type returns the data type of this Schema
@@ -54,26 +52,6 @@ func (array Array) Validate(value interface{}) error {
 		item := v.Index(index).Interface()
 		if err := array.Items.Validate(item); err != nil {
 			return derp.Wrap(err, "schema.Array.Validate", "Invalid array element", item)
-		}
-	}
-
-	return nil
-}
-
-// UnmarshalMap fills this object, using a generic data value
-func (array *Array) UnmarshalMap(data map[string]interface{}) error {
-
-	*array = Array{
-		ID:          convert.String(data["$id"]),
-		Comment:     convert.String(data["$comment"]),
-		Description: convert.String(data["description"]),
-		Required:    convert.Bool(data["required"]),
-	}
-
-	if items, ok := data["items"].(map[string]interface{}); ok {
-
-		if object, err := New(items); err == nil {
-			array.Items = object
 		}
 	}
 
