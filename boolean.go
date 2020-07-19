@@ -9,19 +9,17 @@ import (
 
 // Boolean represents a boolean data type within a JSON-Schema.
 type Boolean struct {
-	ID       string    `json:"$id"`
-	Comment  string    `json:"$comment"`
 	Required bool      `json:"required"`
 	Default  null.Bool `json:"default"`
 }
 
-// Type returns the data type of this Schema
-func (boolean Boolean) Type() Type {
+// Type returns the data type of this Element
+func (boolean *Boolean) Type() Type {
 	return TypeBoolean
 }
 
 // Path returns sub-schemas
-func (boolean Boolean) Path(p path.Path) (Schema, error) {
+func (boolean *Boolean) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return boolean, nil
@@ -31,7 +29,7 @@ func (boolean Boolean) Path(p path.Path) (Schema, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (boolean Boolean) Validate(value interface{}) error {
+func (boolean *Boolean) Validate(value interface{}) error {
 
 	boolValue, valueOk := convert.BoolOk(value, false)
 
@@ -44,4 +42,29 @@ func (boolean Boolean) Validate(value interface{}) error {
 	}
 
 	return nil
+}
+
+// MarshalMap populates object data into a map[string]interface{}
+func (boolean *Boolean) MarshalMap() map[string]interface{} {
+
+	return map[string]interface{}{
+		"type":     boolean.Type(),
+		"required": boolean.Required,
+		"default":  boolean.Default.Interface(),
+	}
+}
+
+// UnmarshalMap tries to populate this object using data from a map[string]interface{}
+func (boolean *Boolean) UnmarshalMap(data map[string]interface{}) error {
+
+	var err error
+
+	if convert.String(data["type"]) != "boolean" {
+		return derp.New(500, "schema.Boolean.UnmarshalMap", "Data is not type 'boolean'", data)
+	}
+
+	boolean.Required = convert.Bool(data["required"])
+	boolean.Default = convert.NullBool(data["default"])
+
+	return err
 }

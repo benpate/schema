@@ -45,6 +45,8 @@ func TestPath(t *testing.T) {
 
 func getTestSchema() Schema {
 
+	var result Schema
+
 	json := []byte(`{
 		"$id": "https://pate.org/example/article",
 		"$comment" : "I had to copy this one to make it work right.",
@@ -87,7 +89,7 @@ func getTestSchema() Schema {
 		"required": ["title", "content"]
 	  }`)
 
-	result, _ := NewFromJSON(json)
+	result.UnmarshalJSON(json)
 
 	return result
 }

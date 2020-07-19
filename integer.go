@@ -9,8 +9,6 @@ import (
 
 // Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
-	ID         string   `json:"$id"`
-	Comment    string   `json:"$comment"`
 	Required   bool     `json:"required"`
 	Default    null.Int `json:"default"`
 	Minimum    null.Int `json:"minimum"`
@@ -19,12 +17,12 @@ type Integer struct {
 }
 
 // Type returns the data type of this Schema
-func (integer Integer) Type() Type {
+func (integer *Integer) Type() Type {
 	return TypeInteger
 }
 
 // Path returns sub-schemas
-func (integer Integer) Path(p path.Path) (Schema, error) {
+func (integer *Integer) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return integer, nil
@@ -34,7 +32,7 @@ func (integer Integer) Path(p path.Path) (Schema, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (integer Integer) Validate(value interface{}) error {
+func (integer *Integer) Validate(value interface{}) error {
 
 	// Try to convert the value to a string
 	intValue, intValueOk := convert.IntOk(value, 0)
@@ -69,4 +67,35 @@ func (integer Integer) Validate(value interface{}) error {
 
 	return nil
 
+}
+
+// MarshalMap populates object data into a map[string]interface{}
+func (integer *Integer) MarshalMap() map[string]interface{} {
+
+	return map[string]interface{}{
+		"type":       integer.Type(),
+		"required":   integer.Required,
+		"default":    integer.Default.Interface(),
+		"minimum":    integer.Minimum.Interface(),
+		"maximum":    integer.Maximum.Interface(),
+		"multipleOf": integer.MultipleOf.Interface(),
+	}
+}
+
+// UnmarshalMap tries to populate this object using data from a map[string]interface{}
+func (integer *Integer) UnmarshalMap(data map[string]interface{}) error {
+
+	var err error
+
+	if convert.String(data["type"]) != "integer" {
+		return derp.New(500, "schema.Integer.UnmarshalMap", "Data is not type 'integet'", data)
+	}
+
+	integer.Required = convert.Bool(data["required"])
+	integer.Default = convert.NullInt(data["default"])
+	integer.Minimum = convert.NullInt(data["minimum"])
+	integer.Maximum = convert.NullInt(data["maximum"])
+	integer.MultipleOf = convert.NullInt(data["multipleOf"])
+
+	return err
 }

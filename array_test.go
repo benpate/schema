@@ -10,7 +10,7 @@ import (
 func TestArrayValidation(t *testing.T) {
 
 	s := &Array{
-		Items: String{MaxLength: null.NewInt(10)},
+		Items: &String{MaxLength: null.NewInt(10)},
 	}
 
 	{
