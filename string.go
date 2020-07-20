@@ -9,8 +9,6 @@ import (
 
 // String represents a string data type within a JSON-Schema.
 type String struct {
-	ID        string
-	Comment   string
 	Required  bool
 	Default   string
 	MinLength null.Int
