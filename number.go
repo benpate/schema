@@ -16,12 +16,12 @@ type Number struct {
 }
 
 // Type returns the data type of this Element
-func (number *Number) Type() Type {
+func (number Number) Type() Type {
 	return TypeNumber
 }
 
 // Path returns sub-schemas
-func (number *Number) Path(p path.Path) (Element, error) {
+func (number Number) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return number, nil
@@ -31,7 +31,7 @@ func (number *Number) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (number *Number) Validate(value interface{}) error {
+func (number Number) Validate(value interface{}) error {
 
 	// Try to convert the value to a string
 	numberValue, numberValueOk := convert.FloatOk(value, 0)
@@ -62,7 +62,7 @@ func (number *Number) Validate(value interface{}) error {
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (number *Number) MarshalMap() map[string]interface{} {
+func (number Number) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
 		"type":     number.Type(),

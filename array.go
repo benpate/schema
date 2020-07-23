@@ -15,12 +15,12 @@ type Array struct {
 }
 
 // Type returns the data type of this Schema
-func (array *Array) Type() Type {
+func (array Array) Type() Type {
 	return TypeArray
 }
 
 // Path returns sub-schemas of this array.
-func (array *Array) Path(p path.Path) (Element, error) {
+func (array Array) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return array, nil
@@ -30,7 +30,7 @@ func (array *Array) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (array *Array) Validate(value interface{}) error {
+func (array Array) Validate(value interface{}) error {
 
 	t := reflect.TypeOf(value)
 
@@ -58,7 +58,7 @@ func (array *Array) Validate(value interface{}) error {
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (array *Array) MarshalMap() map[string]interface{} {
+func (array Array) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
 		"type":     array.Type(),

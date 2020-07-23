@@ -13,12 +13,12 @@ type Object struct {
 }
 
 // Type returns the data type of this Element
-func (object *Object) Type() Type {
+func (object Object) Type() Type {
 	return TypeObject
 }
 
 // Path returns sub-schemas
-func (object *Object) Path(p path.Path) (Element, error) {
+func (object Object) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return object, nil
@@ -34,7 +34,7 @@ func (object *Object) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (object *Object) Validate(value interface{}) error {
+func (object Object) Validate(value interface{}) error {
 
 	if value == nil {
 
@@ -63,7 +63,7 @@ func (object *Object) Validate(value interface{}) error {
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (object *Object) MarshalMap() map[string]interface{} {
+func (object Object) MarshalMap() map[string]interface{} {
 
 	properties := make(map[string]interface{}, len(object.Properties))
 

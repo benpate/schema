@@ -11,12 +11,12 @@ type Any struct {
 }
 
 // Type returns the data type of this Element
-func (any *Any) Type() Type {
+func (any Any) Type() Type {
 	return TypeAny
 }
 
 // Path returns sub-schemas
-func (any *Any) Path(p path.Path) (Element, error) {
+func (any Any) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return any, nil
@@ -26,12 +26,12 @@ func (any *Any) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (any *Any) Validate(value interface{}) error {
+func (any Any) Validate(value interface{}) error {
 	return nil
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (any *Any) MarshalMap() map[string]interface{} {
+func (any Any) MarshalMap() map[string]interface{} {
 	return map[string]interface{}{
 		"type": any.Type(),
 	}

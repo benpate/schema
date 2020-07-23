@@ -17,12 +17,12 @@ type Integer struct {
 }
 
 // Type returns the data type of this Schema
-func (integer *Integer) Type() Type {
+func (integer Integer) Type() Type {
 	return TypeInteger
 }
 
 // Path returns sub-schemas
-func (integer *Integer) Path(p path.Path) (Element, error) {
+func (integer Integer) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return integer, nil
@@ -32,7 +32,7 @@ func (integer *Integer) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (integer *Integer) Validate(value interface{}) error {
+func (integer Integer) Validate(value interface{}) error {
 
 	// Try to convert the value to a string
 	intValue, intValueOk := convert.IntOk(value, 0)
@@ -70,7 +70,7 @@ func (integer *Integer) Validate(value interface{}) error {
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (integer *Integer) MarshalMap() map[string]interface{} {
+func (integer Integer) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
 		"type":       integer.Type(),

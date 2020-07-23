@@ -18,12 +18,12 @@ type String struct {
 }
 
 // Type returns the data type of this Element
-func (str *String) Type() Type {
+func (str String) Type() Type {
 	return TypeString
 }
 
 // Path returns sub-schemas or an error
-func (str *String) Path(p path.Path) (Element, error) {
+func (str String) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return str, nil
@@ -33,7 +33,7 @@ func (str *String) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (str *String) Validate(value interface{}) error {
+func (str String) Validate(value interface{}) error {
 
 	// Try to convert the value to a string
 	stringValue, stringValueOk := value.(string)
@@ -72,7 +72,7 @@ func (str *String) Validate(value interface{}) error {
 }
 
 // MarshalMap populates object data into a map[string]interface{}
-func (str *String) MarshalMap() map[string]interface{} {
+func (str String) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
 		"type":      str.Type(),

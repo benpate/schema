@@ -22,9 +22,14 @@ type Element interface {
 
 	// MarshalMap populates the object data into a map[string]interface{}
 	MarshalMap() map[string]interface{}
+}
+
+type WritableElement interface {
 
 	// UnmarshalMap tries to populate this object using data from a map[string]interface{}
 	UnmarshalMap(map[string]interface{}) error
+
+	Element
 }
 
 // UnmarshalJSON tries to parse a []byte into a schema.Element
@@ -49,7 +54,7 @@ func UnmarshalJSON(data []byte) (Element, error) {
 // UnmarshalMap tries to parse a map[string]interface{} into a schema.Element
 func UnmarshalMap(data interface{}) (Element, error) {
 
-	var result Element
+	var result WritableElement
 
 	if data == nil {
 		return nil, derp.New(500, "schema.UnmarshalElement", "Element is nil")
