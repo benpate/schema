@@ -5,6 +5,7 @@ import (
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/path"
 )
 
 // Schema defines a (simplified) JSON-Schema object, that can be Marshalled/Unmarshalled to JSON.
@@ -12,6 +13,11 @@ type Schema struct {
 	ID      string
 	Comment string
 	Element Element
+}
+
+// Path traverses a path into this schema, and returns a matching Element, or an error.
+func (schema Schema) Path(p path.Path) (Element, error) {
+	return schema.Element.Path(p)
 }
 
 // MarshalJSON converts a schema into JSON.

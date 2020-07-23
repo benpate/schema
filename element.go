@@ -24,6 +24,7 @@ type Element interface {
 	MarshalMap() map[string]interface{}
 }
 
+// WritableElement represents an Element (usually a pointer to a concrete type) whose value can be changed.
 type WritableElement interface {
 
 	// UnmarshalMap tries to populate this object using data from a map[string]interface{}
