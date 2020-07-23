@@ -9,20 +9,35 @@ import (
 
 // Schema defines a (simplified) JSON-Schema object, that can be Marshalled/Unmarshalled to JSON.
 type Schema struct {
-	ID      string `json:"$id"`
-	Comment string `json:"$comment"`
-	element Element
+	ID      string
+	Comment string
+	Element Element
 }
 
-// Element returns the top-level element of this Schema
-func (schema Schema) Element() Element {
-	return schema.element
+// MarshalJSON converts a schema into JSON.
+func (schema Schema) MarshalJSON() ([]byte, error) {
+
+	return json.Marshal(schema.MarshalMap())
+}
+
+// MarshalMap converts a schema into a map[string]interface{}
+func (schema Schema) MarshalMap() map[string]interface{} {
+
+	result := schema.Element.MarshalMap()
+
+	if schema.ID != "" {
+		result["$id"] = schema.ID
+	}
+
+	if schema.Comment != "" {
+		result["$comment"] = schema.Comment
+	}
+
+	return result
 }
 
 // UnmarshalJSON creates a new Schema object using a JSON-serialized byte array.
-func (schema Schema) UnmarshalJSON(data []byte) error {
-
-	var err error
+func (schema *Schema) UnmarshalJSON(data []byte) error {
 
 	unmarshalled := make(map[string]interface{}, 0)
 
@@ -30,9 +45,17 @@ func (schema Schema) UnmarshalJSON(data []byte) error {
 		return derp.Wrap(err, "schema.UnmarshalJSON", "Invalid JSON", string(data))
 	}
 
-	schema.ID = convert.String(unmarshalled["$id"])
-	schema.Comment = convert.String(unmarshalled["$comment"])
-	schema.element, err = UnmarshalMap(unmarshalled)
+	return schema.UnmarshalMap(unmarshalled)
+}
 
-	return err
+// UnmarshalMap updates a Schema using a map[string]interface{}
+func (schema *Schema) UnmarshalMap(data map[string]interface{}) error {
+
+	var err error
+
+	schema.ID = convert.String(data["$id"])
+	schema.Comment = convert.String(data["$comment"])
+	schema.Element, err = UnmarshalMap(data)
+
+	return derp.Wrap(err, "schema.Schema.UnmarshalMap", "Error unmarshalling element")
 }

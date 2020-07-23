@@ -8,6 +8,8 @@ github.com/benpate/convert v0.5.0 h1:lWNIO3j9DghYjtkH3C6fhWQ7bi/5V0VVEvRxqEPYzo0
 github.com/benpate/convert v0.5.0/go.mod h1:bZMFG+bmZ6dMkXmixFMqrWPdyEUIOitFcAcVlfJ2zgQ=
 github.com/benpate/convert v0.7.0 h1:jQxFyjjimcXqOftVpzfBoC5VcnP3CT9/0EOqIqKDYKQ=
 github.com/benpate/convert v0.7.0/go.mod h1:RdD5UC0UAI3LsGcQzq51ZVGUZyZ9g8DITcemEgZ6jkE=
+github.com/benpate/convert v0.7.1 h1:cOtrcntvAcSE5GO+lVAy4VZMxFdNTqjNynJDZfnQOjQ=
+github.com/benpate/convert v0.7.1/go.mod h1:pcY4F1bLyFeKC6F0CKKzUUJoWiBUfRaM+FxgTU+xG7A=
 github.com/benpate/derp v0.9.2 h1:cq0KsxdF3CrWAZ4bttJvoIOyJx3t9jczkxu3ifgOyEg=
 github.com/benpate/derp v0.9.2/go.mod h1:uk1EoSDvBEkBIOw4J/qeLga2kUCvKukIFFk3YE7Zjtk=
 github.com/benpate/derp v0.9.4 h1:tn7LIZe/fo5/9qJ67GZ6QL+nY9jzKX2O0mXdCbN7s5E=
@@ -20,6 +22,8 @@ github.com/benpate/derp v0.12.2 h1:MKKQnNfCu4n8Wu1Bbt5cCI27452/g3TM2zPJY8oj6kU=
 github.com/benpate/derp v0.12.2/go.mod h1:tIAHPj44uS865TVCgkbFzm26nVawvKSVwWRPu+R3wUs=
 github.com/benpate/derp v0.12.3 h1:Y0rGMPyqC1sb0uZmTKKhOYi4S4Q4HHLuV7TPfPjLS9Y=
 github.com/benpate/derp v0.12.3/go.mod h1:tIAHPj44uS865TVCgkbFzm26nVawvKSVwWRPu+R3wUs=
+github.com/benpate/derp v0.13.0 h1:J4J3tH9PLrLiAvaT0hMKyoMgrGRgPOizIfsHBo7qwXQ=
+github.com/benpate/derp v0.13.0/go.mod h1:Zne8hUcv/ljV0xIDe58OIbcSSEl7Ckm81oWZ5NCozz0=
 github.com/benpate/null v0.2.0 h1:2/6UWivkbW6w1+swmWtPW4Fpy9XGc6teXJCJ565pHUw=
 github.com/benpate/null v0.2.0/go.mod h1:br8iIVIEnZrPC0UbJA6ePDBwUEFqPeBQ5sEXKc917jg=
 github.com/benpate/null v0.3.0 h1:y435D9MeGoxqYa66jJIe5RbMa/lcV0CMVXdhCTMlxGI=
