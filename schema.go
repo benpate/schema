@@ -6,7 +6,6 @@ import (
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/path"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Schema defines a (simplified) JSON-Schema object, that can be Marshalled/Unmarshalled to JSON.
@@ -53,7 +52,6 @@ func (schema *Schema) UnmarshalJSON(data []byte) error {
 	}
 
 	if err := schema.UnmarshalMap(unmarshalled); err != nil {
-		spew.Dump("UNMARSHAL", err)
 		return derp.Wrap(err, "schema.UnmarshalJSON", "Unable to unmarshal from Map", unmarshalled)
 	}
 
