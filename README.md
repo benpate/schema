@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/benpate/schema?style=flat-square)](https://goreportcard.com/report/github.com/benpate/schema)
 [![Build Status](http://img.shields.io/travis/benpate/schema.svg?style=flat-square)](https://travis-ci.org/benpate/schema)
 [![Codecov](https://img.shields.io/codecov/c/github/benpate/schema.svg?style=flat-square)](https://codecov.io/gh/benpate/schema)
-
+![Version](https://img.shields.io/github/v/release/benpate/schema)
 
 ## Simplified JSON-Schema
 
