@@ -1,5 +1,13 @@
 package schema
 
+import (
+	"encoding/json"
+	"testing"
+
+	"github.com/davecgh/go-spew/spew"
+	"github.com/stretchr/testify/assert"
+)
+
 /*
 func TestSchema(t *testing.T) {
 
@@ -43,11 +51,26 @@ func TestPath(t *testing.T) {
 }
 */
 
-func getTestSchema() Schema {
+func TestUnmarshal(t *testing.T) {
 
-	var result Schema
+	var schema Schema
 
-	json := []byte(`{
+	err := json.Unmarshal(getTestSchema(), &schema)
+
+	assert.Nil(t, err)
+	spew.Dump(schema)
+
+	result, err := json.Marshal(schema)
+
+	assert.Nil(t, err)
+
+	t.Log(string(result))
+
+}
+
+func getTestSchema() []byte {
+
+	return []byte(`{
 		"$id": "https://pate.org/example/article",
 		"$comment" : "I had to copy this one to make it work right.",
 		"title": "Article",
@@ -88,8 +111,4 @@ func getTestSchema() Schema {
 		},
 		"required": ["title", "content"]
 	  }`)
-
-	result.UnmarshalJSON(json)
-
-	return result
 }

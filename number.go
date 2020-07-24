@@ -64,13 +64,24 @@ func (number Number) Validate(value interface{}) error {
 // MarshalMap populates object data into a map[string]interface{}
 func (number Number) MarshalMap() map[string]interface{} {
 
-	return map[string]interface{}{
+	result := map[string]interface{}{
 		"type":     number.Type(),
 		"required": number.Required,
-		"default":  number.Default.Interface(),
-		"minimum":  number.Minimum.Interface(),
-		"maximum":  number.Maximum.Interface(),
 	}
+
+	if number.Default.IsPresent() {
+		result["default"] = number.Default.Float()
+	}
+
+	if number.Minimum.IsPresent() {
+		result["minimum"] = number.Minimum.Float()
+	}
+
+	if number.Maximum.IsPresent() {
+		result["maximum"] = number.Maximum.Float()
+	}
+
+	return result
 }
 
 // UnmarshalMap tries to populate this object using data from a map[string]interface{}

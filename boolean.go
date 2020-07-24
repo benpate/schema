@@ -47,11 +47,16 @@ func (boolean *Boolean) Validate(value interface{}) error {
 // MarshalMap populates object data into a map[string]interface{}
 func (boolean *Boolean) MarshalMap() map[string]interface{} {
 
-	return map[string]interface{}{
+	result := map[string]interface{}{
 		"type":     boolean.Type(),
 		"required": boolean.Required,
-		"default":  boolean.Default.Interface(),
 	}
+
+	if boolean.Default.IsPresent() {
+		result["default"] = boolean.Default.Bool()
+	}
+
+	return result
 }
 
 // UnmarshalMap tries to populate this object using data from a map[string]interface{}

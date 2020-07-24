@@ -72,14 +72,28 @@ func (integer Integer) Validate(value interface{}) error {
 // MarshalMap populates object data into a map[string]interface{}
 func (integer Integer) MarshalMap() map[string]interface{} {
 
-	return map[string]interface{}{
-		"type":       integer.Type(),
-		"required":   integer.Required,
-		"default":    integer.Default.Interface(),
-		"minimum":    integer.Minimum.Interface(),
-		"maximum":    integer.Maximum.Interface(),
-		"multipleOf": integer.MultipleOf.Interface(),
+	result := map[string]interface{}{
+		"type":     integer.Type(),
+		"required": integer.Required,
 	}
+
+	if integer.Default.IsPresent() {
+		result["default"] = integer.Default.Int()
+	}
+
+	if integer.Minimum.IsPresent() {
+		result["minimum"] = integer.Minimum.Int()
+	}
+
+	if integer.Maximum.IsPresent() {
+		result["maximum"] = integer.Maximum.Int()
+	}
+
+	if integer.MultipleOf.IsPresent() {
+		result["multipleOf"] = integer.MultipleOf.Int()
+	}
+
+	return result
 }
 
 // UnmarshalMap tries to populate this object using data from a map[string]interface{}

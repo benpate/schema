@@ -74,15 +74,32 @@ func (str String) Validate(value interface{}) error {
 // MarshalMap populates object data into a map[string]interface{}
 func (str String) MarshalMap() map[string]interface{} {
 
-	return map[string]interface{}{
-		"type":      str.Type(),
-		"required":  str.Required,
-		"default":   str.Default,
-		"minLength": str.MinLength.Interface(),
-		"maxLength": str.MaxLength.Interface(),
-		"pattern":   str.Pattern,
-		"format":    str.Format,
+	result := map[string]interface{}{
+		"type":     str.Type(),
+		"required": str.Required,
 	}
+
+	if str.Default != "" {
+		result["default"] = str.Default
+	}
+
+	if str.MinLength.IsPresent() {
+		result["minLength"] = str.MinLength.Int()
+	}
+
+	if str.MaxLength.IsPresent() {
+		result["maxLength"] = str.MaxLength.Int()
+	}
+
+	if str.Pattern != "" {
+		result["pattern"] = str.Pattern
+	}
+
+	if str.Format != "" {
+		result["format"] = str.Format
+	}
+
+	return result
 }
 
 // UnmarshalMap tries to populate this object using data from a map[string]interface{}
