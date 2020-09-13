@@ -20,6 +20,16 @@ func (schema Schema) Path(p path.Path) (Element, error) {
 	return schema.Element.Path(p)
 }
 
+// Validate checks a particular value against this schema.
+func (schema Schema) Validate(value interface{}) error {
+
+	if schema.Element != nil {
+		return schema.Element.Validate(value)
+	}
+
+	return nil
+}
+
 // MarshalJSON converts a schema into JSON.
 func (schema Schema) MarshalJSON() ([]byte, error) {
 
