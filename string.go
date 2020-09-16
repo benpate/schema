@@ -1,10 +1,14 @@
 package schema
 
 import (
+	"strings"
+
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
+	"github.com/benpate/list"
 	"github.com/benpate/null"
 	"github.com/benpate/path"
+	"github.com/benpate/schema/format"
 )
 
 // String represents a string data type within a JSON-Schema.
@@ -36,10 +40,10 @@ func (str String) Path(p path.Path) (Element, error) {
 func (str String) Validate(value interface{}) error {
 
 	// Try to convert the value to a string
-	stringValue, stringValueOk := value.(string)
+	stringValue, ok := value.(string)
 
 	// Fail if not a string
-	if !stringValueOk {
+	if !ok {
 		return derp.New(400, "schema.String.Validate", "must be a string", value)
 	}
 
@@ -61,6 +65,37 @@ func (str String) Validate(value interface{}) error {
 	}
 
 	if str.Format != "" {
+
+		formats := strings.Split(str.Format, " ")
+
+		for _, arg := range formats {
+			var fn format.StringFormat
+			name, arg := list.Split(arg, "=")
+
+			switch name {
+			case "lowercase":
+				fn = format.HasLowercase(arg)
+			case "uppercase":
+				fn = format.HasUppercase(arg)
+			case "symbols":
+				fn = format.HasSymbols(arg)
+			case "numbers":
+				fn = format.HasNumbers(arg)
+			case "entropy":
+				fn = format.HasEntropy(arg)
+			case "in":
+				fn = format.In(arg)
+			case "not-in":
+				fn = format.NotIn(arg)
+			default:
+				continue
+			}
+
+			if err := fn(stringValue); err != nil {
+				return derp.Wrap(err, "schema.String.Validate", "Invalid string value", stringValue)
+			}
+
+		}
 		// TODO: check custom formats...
 	}
 
