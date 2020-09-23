@@ -28,7 +28,9 @@ func HasUppercase(arg string) StringFormat {
 func HasNumbers(arg string) StringFormat {
 
 	return func(value string) error {
-		return nil
+		return countCharacters(arg, value, func(ch byte) bool {
+			return ((ch >= '0') && (ch <= '9'))
+		})
 	}
 }
 
@@ -51,7 +53,7 @@ func countCharacters(arg string, value string, fn func(byte) bool) error {
 	minCount, err := strconv.Atoi(arg)
 
 	if err != nil {
-		return err
+		minCount = 1
 	}
 
 	count := 0

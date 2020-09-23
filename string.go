@@ -39,28 +39,30 @@ func (str String) Path(p path.Path) (Element, error) {
 // Validate compares a generic data value using this Schema
 func (str String) Validate(value interface{}) error {
 
+	var error error
+
 	// Try to convert the value to a string
 	stringValue, ok := value.(string)
 
 	// Fail if not a string
 	if !ok {
-		return derp.New(400, "schema.String.Validate", "must be a string", value)
+		error = derp.Append(error, derp.New(400, "schema.String.Validate", "must be a string", value))
 	}
 
 	// Fail if required value is not present
 	if str.Required && (stringValue == "") {
-		return derp.New(400, "schema.String.Validate", "is required")
+		error = derp.Append(error, Invalid("", "field is required"))
 	}
 
 	if str.MinLength.IsPresent() {
 		if len(stringValue) < str.MinLength.Int() {
-			return derp.New(400, "schema.String.Validate", "Minimum length is", str.MinLength)
+			error = derp.Append(error, Invalid("", "minimum length is "+str.MinLength.String()))
 		}
 	}
 
 	if str.MaxLength.IsPresent() {
 		if len(stringValue) > str.MaxLength.Int() {
-			return derp.New(400, "schema.String.Validate", "Maximum length is", str.MaxLength)
+			error = derp.Append(error, Invalid("", "Maximum length is "+str.MaxLength.String()))
 		}
 	}
 
@@ -92,18 +94,16 @@ func (str String) Validate(value interface{}) error {
 			}
 
 			if err := fn(stringValue); err != nil {
-				return derp.Wrap(err, "schema.String.Validate", "Invalid string value", stringValue)
+				error = derp.Append(error, err)
 			}
-
 		}
-		// TODO: check custom formats...
 	}
 
 	if str.Pattern != "" {
 		// TODO: check custom patterns...
 	}
 
-	return nil
+	return error
 }
 
 // MarshalMap populates object data into a map[string]interface{}
