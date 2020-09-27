@@ -9,10 +9,9 @@ import (
 
 // Number represents a number data type within a JSON-Schema.
 type Number struct {
-	Required bool       `json:"required"`
-	Default  null.Float `json:"default"`
-	Minimum  null.Float `json:"minimum"`
-	Maximum  null.Float `json:"maximum"`
+	Default null.Float `json:"default"`
+	Minimum null.Float `json:"minimum"`
+	Maximum null.Float `json:"maximum"`
 }
 
 // Type returns the data type of this Element
@@ -38,35 +37,31 @@ func (number Number) Validate(value interface{}) error {
 
 	// Fail if not a number
 	if !numberValueOk {
-		return derp.New(500, "schema.Number.Validate", "must be a number", value)
+		return ValidationError{Message: "must be a number"}
 	}
 
-	// Fail if required value is not present
-	if number.Required && (numberValue == 0) {
-		return derp.New(500, "schema.Number.Validate", "is required")
-	}
+	result := derp.NewCollector()
 
 	if number.Minimum.IsPresent() {
 		if numberValue <= number.Minimum.Float() {
-			return derp.New(500, "schema.Number.Validate", "Minimum is", number.Minimum)
+			result.Add(ValidationError{Message: "minimum value is" + convert.String(number.Minimum)})
 		}
 	}
 
 	if number.Maximum.IsPresent() {
 		if numberValue >= number.Maximum.Float() {
-			return derp.New(500, "schema.Number.Validate", "Maximum is", number.Maximum)
+			result.Add(ValidationError{Message: "maximum value is " + convert.String(number.Maximum)})
 		}
 	}
 
-	return nil
+	return result.Error()
 }
 
 // MarshalMap populates object data into a map[string]interface{}
 func (number Number) MarshalMap() map[string]interface{} {
 
 	result := map[string]interface{}{
-		"type":     number.Type(),
-		"required": number.Required,
+		"type": number.Type(),
 	}
 
 	if number.Default.IsPresent() {
@@ -93,7 +88,6 @@ func (number *Number) UnmarshalMap(data map[string]interface{}) error {
 		return derp.New(500, "schema.Number.UnmarshalMap", "Data is not type 'number'", data)
 	}
 
-	number.Required = convert.Bool(data["required"])
 	number.Default = convert.NullFloat(data["default"])
 	number.Minimum = convert.NullFloat(data["minimum"])
 	number.Maximum = convert.NullFloat(data["maximum"])

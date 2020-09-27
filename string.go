@@ -8,7 +8,6 @@ import (
 	"github.com/benpate/list"
 	"github.com/benpate/null"
 	"github.com/benpate/path"
-	"github.com/benpate/schema/format"
 )
 
 // String represents a string data type within a JSON-Schema.
@@ -39,62 +38,45 @@ func (str String) Path(p path.Path) (Element, error) {
 // Validate compares a generic data value using this Schema
 func (str String) Validate(value interface{}) error {
 
-	var error error
-
 	// Try to convert the value to a string
 	stringValue, ok := value.(string)
 
 	// Fail if not a string
 	if !ok {
-		error = derp.Append(error, derp.New(400, "schema.String.Validate", "must be a string", value))
+		return ValidationError{Message: "must be a string"}
 	}
+
+	result := derp.NewCollector()
 
 	// Fail if required value is not present
 	if str.Required && (stringValue == "") {
-		error = derp.Append(error, Invalid("", "field is required"))
+		result.Add(ValidationError{Message: "field is required"})
 	}
 
 	if str.MinLength.IsPresent() {
 		if len(stringValue) < str.MinLength.Int() {
-			error = derp.Append(error, Invalid("", "minimum length is "+str.MinLength.String()))
+			result.Add(ValidationError{Message: "minimum length is " + str.MinLength.String()})
 		}
 	}
 
 	if str.MaxLength.IsPresent() {
 		if len(stringValue) > str.MaxLength.Int() {
-			error = derp.Append(error, Invalid("", "Maximum length is "+str.MaxLength.String()))
+			result.Add(ValidationError{Message: "Maximum length is " + str.MaxLength.String()})
 		}
 	}
 
 	if str.Format != "" {
 
-		formats := strings.Split(str.Format, " ")
+		formatParams := strings.Split(str.Format, " ")
 
-		for _, arg := range formats {
-			var fn format.StringFormat
+		for _, arg := range formatParams {
+
 			name, arg := list.Split(arg, "=")
 
-			switch name {
-			case "lowercase":
-				fn = format.HasLowercase(arg)
-			case "uppercase":
-				fn = format.HasUppercase(arg)
-			case "symbols":
-				fn = format.HasSymbols(arg)
-			case "numbers":
-				fn = format.HasNumbers(arg)
-			case "entropy":
-				fn = format.HasEntropy(arg)
-			case "in":
-				fn = format.In(arg)
-			case "not-in":
-				fn = format.NotIn(arg)
-			default:
-				continue
-			}
-
-			if err := fn(stringValue); err != nil {
-				error = derp.Append(error, err)
+			if fn, ok := formats[name]; ok {
+				if err := fn(arg)(stringValue); err != nil {
+					result.Add(err)
+				}
 			}
 		}
 	}
@@ -103,7 +85,7 @@ func (str String) Validate(value interface{}) error {
 		// TODO: check custom patterns...
 	}
 
-	return error
+	return result.Error()
 }
 
 // MarshalMap populates object data into a map[string]interface{}

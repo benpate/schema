@@ -10,8 +10,7 @@ import (
 
 // Array represents an array data type within a JSON-Schema.
 type Array struct {
-	Required bool
-	Items    Element
+	Items Element
 }
 
 // Type returns the data type of this Schema
@@ -26,7 +25,11 @@ func (array Array) Path(p path.Path) (Element, error) {
 		return array, nil
 	}
 
-	return array.Items.Path(p)
+	if index, _ := convert.IntOk(p.Head(), -1); index >= 0 {
+		return array.Items.Path(p.Tail())
+	}
+
+	return nil, derp.New(derp.CodeBadRequestError, "schema.Array.Path", "invalid array index", p)
 }
 
 // Validate compares a generic data value using this Schema
@@ -35,8 +38,10 @@ func (array Array) Validate(value interface{}) error {
 	t := reflect.TypeOf(value)
 
 	if (t.Kind() != reflect.Array) && (t.Kind() != reflect.Slice) {
-		return derp.New(400, "schema.Array.Validate", "Value must be an array", value)
+		return ValidationError{Message: "must be an array"}
 	}
+
+	result := derp.NewCollector()
 
 	v := reflect.ValueOf(value)
 
@@ -50,20 +55,19 @@ func (array Array) Validate(value interface{}) error {
 
 		item := v.Index(index).Interface()
 		if err := array.Items.Validate(item); err != nil {
-			return derp.Wrap(err, "schema.Array.Validate", "Invalid array element", item)
+			result.Add(Rollup(err, convert.String(index)))
 		}
 	}
 
-	return nil
+	return result.Error()
 }
 
 // MarshalMap populates object data into a map[string]interface{}
 func (array Array) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
-		"type":     array.Type(),
-		"required": array.Required,
-		"items":    array.Items.MarshalMap(),
+		"type":  array.Type(),
+		"items": array.Items.MarshalMap(),
 	}
 }
 
@@ -76,7 +80,6 @@ func (array *Array) UnmarshalMap(data map[string]interface{}) error {
 		return derp.New(500, "schema.Array.UnmarshalMap", "Data is not type 'array'", data)
 	}
 
-	array.Required = convert.Bool(data["required"])
 	array.Items, err = UnmarshalMap(data["items"])
 
 	return err

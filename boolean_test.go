@@ -17,11 +17,3 @@ func TestBool(t *testing.T) {
 	assert.NotNil(t, s.Validate("string-bad"))
 
 }
-
-func TestBoolRequired(t *testing.T) {
-
-	s := Boolean{Required: true}
-
-	assert.NotNil(t, s.Validate(false))
-	assert.Nil(t, s.Validate(true))
-}

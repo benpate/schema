@@ -8,8 +8,8 @@ import (
 
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
-	Required   bool
 	Properties map[string]Element
+	Required   []string
 }
 
 // Type returns the data type of this Element
@@ -36,30 +36,29 @@ func (object Object) Path(p path.Path) (Element, error) {
 // Validate compares a generic data value using this Schema
 func (object Object) Validate(value interface{}) error {
 
-	if value == nil {
-
-		if object.Required {
-			return derp.New(500, "schema.Object.Validate", "value is required")
-		}
-
-		return nil
-	}
-
 	mapValue, mapOk := value.(map[string]interface{})
 
 	if !mapOk {
 		return derp.New(500, "schema.Object.Validate", "value must be a map", value)
 	}
 
+	result := derp.NewCollector()
+
 	for key, schema := range object.Properties {
 
-		if err := schema.Validate(mapValue[key]); err != nil {
-			return derp.Wrap(err, "schema.Object.Validate", "Eror in object property", value)
+		if errs := schema.Validate(mapValue[key]); errs != nil {
+			result.Add(Rollup(errs, key))
 		}
-
 	}
 
-	return nil
+	for _, propertyName := range object.Required {
+
+		if isEmpty(mapValue[propertyName]) {
+			result.Add(ValidationError{Path: propertyName, Message: "Value is required"})
+		}
+	}
+
+	return result.Error()
 }
 
 // MarshalMap populates object data into a map[string]interface{}
@@ -87,8 +86,6 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 		return derp.New(500, "schema.Object.UnmarshalMap", "Data is not type 'object'", data)
 	}
 
-	object.Required = convert.Bool(data["required"])
-
 	if properties, ok := data["properties"].(map[string]interface{}); ok {
 
 		object.Properties = make(map[string]Element, len(properties))
@@ -102,6 +99,10 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 				}
 			}
 		}
+	}
+
+	if required, ok := data["required"].([]string); ok {
+		object.Required = required
 	}
 
 	return err

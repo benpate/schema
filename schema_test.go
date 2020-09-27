@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -58,7 +57,7 @@ func TestUnmarshal(t *testing.T) {
 	err := json.Unmarshal(getTestSchema(), &schema)
 
 	assert.Nil(t, err)
-	spew.Dump(schema)
+	// spew.Dump(schema)
 
 	result, err := json.Marshal(schema)
 

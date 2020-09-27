@@ -16,45 +16,75 @@ type ValidationError struct {
 }
 
 // Invalid returns a fully populated ValidationError to the caller
-func Invalid(path string, message string) *ValidationError {
-	return &ValidationError{
-		Path:    path,
+func Invalid(message string) ValidationError {
+	return ValidationError{
+		Path:    "",
 		Message: message,
 	}
 }
 
 // Error returns a string representation of this ValidationError, and implements
 // the builtin errors.error interface.
-func (v *ValidationError) Error() string {
+func (v ValidationError) Error() string {
 	return v.Message
 }
 
 // ErrorCode returns CodeValidationError for this ValidationError
 // It implements the ErrorCodeGetter interface.
-func (v *ValidationError) ErrorCode() int {
+func (v ValidationError) ErrorCode() int {
 	return ValidationErrorCode
 }
 
 // Rollup bundles a child error into a parent
-func Rollup(parent *derp.MultiError, child *derp.MultiError, path string) *derp.MultiError {
+func Rollup(errs error, path string) error {
 
-	if child != nil {
+	if errs == nil {
+		return nil
+	}
 
-		for _, err := range *child {
+	if multiError, ok := errs.(*derp.MultiError); ok {
+
+		for index := range *multiError {
 
 			// If the child error is nil for some reason, then skip this record.
-			if err == nil {
+			if (*multiError)[index] == nil {
 				continue
 			}
 
-			if validationError, ok := err.(*ValidationError); ok {
+			if validationError, ok := (*multiError)[index].(ValidationError); ok {
 				validationError.Path = list.PushHead(validationError.Path, path, ".")
 			}
-
-			parent = derp.Append(parent, err)
 		}
-
 	}
 
-	return parent
+	return errs
+}
+
+func isEmpty(value interface{}) bool {
+
+	if value == nil {
+		return true
+	}
+
+	switch v := value.(type) {
+	case Nullable:
+		return v.IsNull()
+	case string:
+		return v == ""
+	case int:
+	case int8:
+	case int16:
+	case int32:
+	case int64:
+	case uint:
+	case uint8:
+	case uint16:
+	case uint32:
+	case uint64:
+	case float32:
+	case float64:
+		return v == 0
+	}
+
+	return false
 }

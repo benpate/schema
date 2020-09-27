@@ -9,7 +9,6 @@ import (
 
 // Integer represents an integer data type within a JSON-Schema.
 type Integer struct {
-	Required   bool     `json:"required"`
 	Default    null.Int `json:"default"`
 	Minimum    null.Int `json:"minimum"`
 	Maximum    null.Int `json:"maximum"`
@@ -39,42 +38,37 @@ func (integer Integer) Validate(value interface{}) error {
 
 	// Fail if not a number
 	if !intValueOk {
-		return derp.New(500, "schema.Int.Validate", "must be a number", value)
+		return ValidationError{Message: "must be a number"}
 	}
 
-	// Fail if required value is not present
-	if integer.Required && (intValue == 0) {
-		return derp.New(500, "schema.Int.Validate", "is required")
-	}
+	result := derp.NewCollector()
 
 	if integer.Minimum.IsPresent() {
 		if intValue < integer.Minimum.Int() {
-			return derp.New(500, "schema.Int.Validate", "Minimum is", integer.Minimum)
+			result.Add(ValidationError{Message: "minimum value is " + convert.String(integer.Minimum)})
 		}
 	}
 
 	if integer.Maximum.IsPresent() {
 		if intValue > integer.Maximum.Int() {
-			return derp.New(500, "schema.Int.Validate", "Maximum is", integer.Maximum)
+			result.Add(ValidationError{Message: "maximum value is " + convert.String(integer.Maximum)})
 		}
 	}
 
 	if integer.MultipleOf.IsPresent() {
 		if (intValue % integer.MultipleOf.Int()) != 0 {
-			return derp.New(500, "schema.Int.Validate", "Mustbe a multiple of ", integer.MultipleOf)
+			result.Add(ValidationError{Message: "must be a multiple of " + convert.String(integer.MultipleOf)})
 		}
 	}
 
-	return nil
-
+	return result.Error()
 }
 
 // MarshalMap populates object data into a map[string]interface{}
 func (integer Integer) MarshalMap() map[string]interface{} {
 
 	result := map[string]interface{}{
-		"type":     integer.Type(),
-		"required": integer.Required,
+		"type": integer.Type(),
 	}
 
 	if integer.Default.IsPresent() {
@@ -102,10 +96,9 @@ func (integer *Integer) UnmarshalMap(data map[string]interface{}) error {
 	var err error
 
 	if convert.String(data["type"]) != "integer" {
-		return derp.New(500, "schema.Integer.UnmarshalMap", "Data is not type 'integet'", data)
+		return derp.New(500, "schema.Integer.UnmarshalMap", "Data is not type 'integer'", data)
 	}
 
-	integer.Required = convert.Bool(data["required"])
 	integer.Default = convert.NullInt(data["default"])
 	integer.Minimum = convert.NullInt(data["minimum"])
 	integer.Maximum = convert.NullInt(data["maximum"])

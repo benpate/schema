@@ -19,18 +19,6 @@ func TestInteger(t *testing.T) {
 
 }
 
-func TestIntegerRequired(t *testing.T) {
-
-	s := Integer{
-		Required: true,
-	}
-
-	assert.Nil(t, s.Validate(-1))
-	assert.NotNil(t, s.Validate(0))
-	assert.Nil(t, s.Validate(1))
-	assert.Nil(t, s.Validate(2))
-}
-
 func TestIntegerMinimum(t *testing.T) {
 
 	s := Integer{

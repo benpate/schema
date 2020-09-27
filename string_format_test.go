@@ -38,7 +38,7 @@ func TestStringUnmarshalComplete(t *testing.T) {
 
 func TestStringFormatLowercase(t *testing.T) {
 
-	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"lowercase=2"}`))
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"lower=2"}`))
 
 	require.Nil(t, err)
 
@@ -49,7 +49,7 @@ func TestStringFormatLowercase(t *testing.T) {
 
 func TestStringFormatUppercase(t *testing.T) {
 
-	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"uppercase=2"}`))
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"upper=2"}`))
 
 	require.Nil(t, err)
 
