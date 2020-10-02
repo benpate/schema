@@ -1,10 +1,12 @@
 package schema
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/benpate/null"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInteger(t *testing.T) {
@@ -16,7 +18,22 @@ func TestInteger(t *testing.T) {
 
 	assert.NotNil(t, s.Validate(1.1))
 	assert.NotNil(t, s.Validate("string-bad"))
+}
 
+func TestIntegerRequired(t *testing.T) {
+
+	j := []byte(`{"type":"integer", "required":true}`)
+	s := Schema{}
+
+	err := json.Unmarshal(j, &s)
+	require.Nil(t, err)
+
+	require.True(t, s.Element.(*Integer).Required)
+
+	require.Nil(t, s.Validate(10))
+	require.Nil(t, s.Validate(20))
+
+	require.NotNil(t, s.Validate(0))
 }
 
 func TestIntegerMinimum(t *testing.T) {

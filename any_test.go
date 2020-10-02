@@ -29,6 +29,25 @@ func TestAny(t *testing.T) {
 	}
 }
 
+func TestAnyRequired(t *testing.T) {
+
+	j := []byte(`{"type":"any", "required":true}`)
+	s := Schema{}
+
+	err := json.Unmarshal(j, &s)
+	require.Nil(t, err)
+
+	require.True(t, s.Element.(*Any).Required)
+
+	require.Nil(t, s.Validate("any string"))
+	require.Nil(t, s.Validate(10))
+	require.Nil(t, s.Validate(10.1))
+	require.Nil(t, s.Validate(true))
+
+	require.NotNil(t, s.Validate(""))
+	require.NotNil(t, s.Validate(nil))
+}
+
 func TestAnyPath(t *testing.T) {
 
 	a := Any{}

@@ -12,12 +12,12 @@ import (
 
 // String represents a string data type within a JSON-Schema.
 type String struct {
-	Required  bool
 	Default   string
 	MinLength null.Int
 	MaxLength null.Int
 	Pattern   string
 	Format    string
+	Required  bool
 }
 
 // Type returns the data type of this Element
@@ -46,12 +46,13 @@ func (str String) Validate(value interface{}) error {
 		return ValidationError{Message: "must be a string"}
 	}
 
-	result := derp.NewCollector()
-
-	// Fail if required value is not present
-	if str.Required && (stringValue == "") {
-		result.Add(ValidationError{Message: "field is required"})
+	if str.Required {
+		if stringValue == "" {
+			return ValidationError{Message: "field is required"}
+		}
 	}
+
+	result := derp.NewCollector()
 
 	if str.MinLength.IsPresent() {
 		if len(stringValue) < str.MinLength.Int() {
@@ -128,12 +129,12 @@ func (str *String) UnmarshalMap(data map[string]interface{}) error {
 		return derp.New(500, "schema.String.UnmarshalMap", "Data is not type 'string'", data)
 	}
 
-	str.Required = convert.Bool(data["required"])
 	str.Default = convert.String(data["default"])
 	str.MinLength = convert.NullInt(data["minLength"])
 	str.MaxLength = convert.NullInt(data["maxLength"])
 	str.Pattern = convert.String(data["pattern"])
 	str.Format = convert.String(data["format"])
+	str.Required = convert.Bool(data["required"])
 
 	return err
 }

@@ -8,8 +8,9 @@ import (
 
 // Object represents an object data type within a JSON-Schema.
 type Object struct {
-	Properties map[string]Element
-	Required   []string
+	Properties    map[string]Element
+	RequiredProps []string
+	Required      bool
 }
 
 // Type returns the data type of this Element
@@ -51,7 +52,7 @@ func (object Object) Validate(value interface{}) error {
 		}
 	}
 
-	for _, propertyName := range object.Required {
+	for _, propertyName := range object.RequiredProps {
 
 		if isEmpty(mapValue[propertyName]) {
 			result.Add(ValidationError{Path: propertyName, Message: "Value is required"})
@@ -72,8 +73,8 @@ func (object Object) MarshalMap() map[string]interface{} {
 
 	return map[string]interface{}{
 		"type":       object.Type(),
-		"required":   object.Required,
 		"properties": properties,
+		"required":   object.RequiredProps,
 	}
 }
 
@@ -101,8 +102,37 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 		}
 	}
 
-	if required, ok := data["required"].([]string); ok {
+	// Handle "simple" required as a boolean
+	if required, ok := data["required"].(bool); ok {
 		object.Required = required
+	}
+
+	// Handle "standards" required as an array of strings.
+	if required, ok := data["required"].([]string); ok {
+		object.RequiredProps = required
+
+		for _, name := range required {
+
+			if property, ok := object.Properties[name]; ok {
+
+				switch p := property.(type) {
+				case Any:
+					p.Required = true
+				case Array:
+					p.Required = true
+				case Boolean:
+					p.Required = true
+				case Integer:
+					p.Required = true
+				case Number:
+					p.Required = true
+				case Object:
+					p.Required = true
+				case String:
+					p.Required = true
+				}
+			}
+		}
 	}
 
 	return err

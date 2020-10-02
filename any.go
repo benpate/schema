@@ -8,6 +8,7 @@ import (
 
 // Any represents a any data type within a JSON-Schema.
 type Any struct {
+	Required bool
 }
 
 // Type returns the data type of this Element
@@ -27,6 +28,13 @@ func (any Any) Path(p path.Path) (Element, error) {
 
 // Validate compares a generic data value using this Schema
 func (any Any) Validate(value interface{}) error {
+
+	if any.Required {
+		if convert.String(value) == "" {
+			return ValidationError{Message: "field is required"}
+		}
+	}
+
 	return nil
 }
 
@@ -43,6 +51,8 @@ func (any *Any) UnmarshalMap(data map[string]interface{}) error {
 	if convert.String(data["type"]) != "any" {
 		return derp.New(500, "schema.Any.UnmarshalMap", "Data is not type 'any'", data)
 	}
+
+	any.Required = convert.Bool(data["required"])
 
 	return nil
 }

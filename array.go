@@ -10,7 +10,8 @@ import (
 
 // Array represents an array data type within a JSON-Schema.
 type Array struct {
-	Items Element
+	Items    Element
+	Required bool
 }
 
 // Type returns the data type of this Schema
@@ -47,8 +48,8 @@ func (array Array) Validate(value interface{}) error {
 
 	length := v.Len()
 
-	if array.Items == nil {
-		return nil
+	if array.Required && length == 0 {
+		return ValidationError{Message: "field is required"}
 	}
 
 	for index := 0; index < length; index = index + 1 {
@@ -81,6 +82,7 @@ func (array *Array) UnmarshalMap(data map[string]interface{}) error {
 	}
 
 	array.Items, err = UnmarshalMap(data["items"])
+	array.Required = convert.Bool(data["required"])
 
 	return err
 }

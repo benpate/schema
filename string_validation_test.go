@@ -1,10 +1,12 @@
 package schema
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/benpate/null"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStringType(t *testing.T) {
@@ -15,6 +17,20 @@ func TestStringType(t *testing.T) {
 	assert.NotNil(t, s.Validate(0))
 	assert.NotNil(t, s.Validate([]string{}))
 	assert.NotNil(t, s.Validate(map[string]interface{}{}))
+}
+
+func TestStringUnmarshal(t *testing.T) {
+
+	j := []byte(`{"type":"string", "required":true}`)
+	s := Schema{}
+
+	err := json.Unmarshal(j, &s)
+	require.Nil(t, err)
+
+	require.True(t, s.Element.(*String).Required)
+
+	require.Nil(t, s.Validate("this should work"))
+	require.NotNil(t, s.Validate(""))
 }
 
 func TestStringRequired(t *testing.T) {

@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"encoding/json"
+
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
@@ -9,16 +11,17 @@ import (
 
 // Boolean represents a boolean data type within a JSON-Schema.
 type Boolean struct {
-	Default null.Bool `json:"default"`
+	Default  null.Bool `json:"default"`
+	Required bool
 }
 
 // Type returns the data type of this Element
-func (boolean *Boolean) Type() Type {
+func (boolean Boolean) Type() Type {
 	return TypeBoolean
 }
 
 // Path returns sub-schemas
-func (boolean *Boolean) Path(p path.Path) (Element, error) {
+func (boolean Boolean) Path(p path.Path) (Element, error) {
 
 	if p.IsEmpty() {
 		return boolean, nil
@@ -28,19 +31,28 @@ func (boolean *Boolean) Path(p path.Path) (Element, error) {
 }
 
 // Validate compares a generic data value using this Schema
-func (boolean *Boolean) Validate(value interface{}) error {
+func (boolean Boolean) Validate(value interface{}) error {
 
-	_, valueOk := convert.BoolOk(value, false)
+	v, valueOk := convert.BoolOk(value, false)
 
 	if !valueOk {
 		return Invalid("must be 'true' or 'false'")
 	}
 
+	if boolean.Required && !v {
+		return ValidationError{Message: "field is required"}
+	}
+
 	return nil
 }
 
+// MarshalJSON implements the json.Marshaler interface
+func (boolean Boolean) MarshalJSON() ([]byte, error) {
+	return json.Marshal(boolean.MarshalMap())
+}
+
 // MarshalMap populates object data into a map[string]interface{}
-func (boolean *Boolean) MarshalMap() map[string]interface{} {
+func (boolean Boolean) MarshalMap() map[string]interface{} {
 
 	result := map[string]interface{}{
 		"type": boolean.Type(),
@@ -61,6 +73,7 @@ func (boolean *Boolean) UnmarshalMap(data map[string]interface{}) error {
 	}
 
 	boolean.Default = convert.NullBool(data["default"])
+	boolean.Required = convert.Bool(data["required"])
 
 	return nil
 }

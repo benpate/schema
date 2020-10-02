@@ -9,9 +9,10 @@ import (
 
 // Number represents a number data type within a JSON-Schema.
 type Number struct {
-	Default null.Float `json:"default"`
-	Minimum null.Float `json:"minimum"`
-	Maximum null.Float `json:"maximum"`
+	Default  null.Float `json:"default"`
+	Minimum  null.Float `json:"minimum"`
+	Maximum  null.Float `json:"maximum"`
+	Required bool
 }
 
 // Type returns the data type of this Element
@@ -38,6 +39,12 @@ func (number Number) Validate(value interface{}) error {
 	// Fail if not a number
 	if !numberValueOk {
 		return ValidationError{Message: "must be a number"}
+	}
+
+	if number.Required {
+		if numberValue == 0 {
+			return ValidationError{Message: "field is required"}
+		}
 	}
 
 	result := derp.NewCollector()
@@ -91,6 +98,7 @@ func (number *Number) UnmarshalMap(data map[string]interface{}) error {
 	number.Default = convert.NullFloat(data["default"])
 	number.Minimum = convert.NullFloat(data["minimum"])
 	number.Maximum = convert.NullFloat(data["maximum"])
+	number.Required = convert.Bool(data["required"])
 
 	return err
 }

@@ -13,6 +13,7 @@ type Integer struct {
 	Minimum    null.Int `json:"minimum"`
 	Maximum    null.Int `json:"maximum"`
 	MultipleOf null.Int `json:"multipleOf"`
+	Required   bool
 }
 
 // Type returns the data type of this Schema
@@ -39,6 +40,12 @@ func (integer Integer) Validate(value interface{}) error {
 	// Fail if not a number
 	if !intValueOk {
 		return ValidationError{Message: "must be a number"}
+	}
+
+	if integer.Required {
+		if intValue == 0 {
+			return ValidationError{Message: "field is required"}
+		}
 	}
 
 	result := derp.NewCollector()
@@ -103,6 +110,7 @@ func (integer *Integer) UnmarshalMap(data map[string]interface{}) error {
 	integer.Minimum = convert.NullInt(data["minimum"])
 	integer.Maximum = convert.NullInt(data["maximum"])
 	integer.MultipleOf = convert.NullInt(data["multipleOf"])
+	integer.Required = convert.Bool(data["required"])
 
 	return err
 }
