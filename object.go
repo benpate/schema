@@ -87,6 +87,11 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 		return derp.New(500, "schema.Object.UnmarshalMap", "Data is not type 'object'", data)
 	}
 
+	// Handle "simple" required as a boolean
+	if required, ok := data["required"].(bool); ok {
+		object.Required = required
+	}
+
 	if properties, ok := data["properties"].(map[string]interface{}); ok {
 
 		object.Properties = make(map[string]Element, len(properties))
@@ -95,40 +100,41 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 
 			if propertyMap, ok := value.(map[string]interface{}); ok {
 
+				if _, ok := propertyMap["required"]; !ok && object.Required {
+					propertyMap["required"] = true
+				}
+
 				if propertyObject, err := UnmarshalMap(propertyMap); err == nil {
+
 					object.Properties[key] = propertyObject
 				}
 			}
 		}
 	}
 
-	// Handle "simple" required as a boolean
-	if required, ok := data["required"].(bool); ok {
-		object.Required = required
-	}
-
 	// Handle "standards" required as an array of strings.
-	if required, ok := data["required"].([]string); ok {
-		object.RequiredProps = required
+	if required, ok := data["required"].([]interface{}); ok {
 
-		for _, name := range required {
+		object.RequiredProps = convert.SliceOfString(required)
+
+		for _, name := range object.RequiredProps {
 
 			if property, ok := object.Properties[name]; ok {
 
 				switch p := property.(type) {
-				case Any:
+				case *Any:
 					p.Required = true
-				case Array:
+				case *Array:
 					p.Required = true
-				case Boolean:
+				case *Boolean:
 					p.Required = true
-				case Integer:
+				case *Integer:
 					p.Required = true
-				case Number:
+				case *Number:
 					p.Required = true
-				case Object:
+				case *Object:
 					p.Required = true
-				case String:
+				case *String:
 					p.Required = true
 				}
 			}

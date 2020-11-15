@@ -3,7 +3,7 @@ module github.com/benpate/schema
 go 1.15
 
 require (
-	github.com/benpate/convert v0.7.2
+	github.com/benpate/convert v0.8.0
 	github.com/benpate/derp v0.19.0
 	github.com/benpate/list v0.3.0
 	github.com/benpate/null v0.5.0

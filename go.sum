@@ -12,6 +12,8 @@ github.com/benpate/convert v0.7.1 h1:cOtrcntvAcSE5GO+lVAy4VZMxFdNTqjNynJDZfnQOjQ
 github.com/benpate/convert v0.7.1/go.mod h1:pcY4F1bLyFeKC6F0CKKzUUJoWiBUfRaM+FxgTU+xG7A=
 github.com/benpate/convert v0.7.2 h1:H6x8NWYL1aluv+ELdpqyyrUKllEhT7I8fZYUKPuL9Oc=
 github.com/benpate/convert v0.7.2/go.mod h1:rhsMJt6wUpI21qj44/4Wa71FZ5a10LiZrayMlC0vppk=
+github.com/benpate/convert v0.8.0 h1:+F64xhD4f1OJNIaWRcErKpJ+sz13qiQh45cpOOesOLM=
+github.com/benpate/convert v0.8.0/go.mod h1:Wy2jTY5Ys0E/fDubQx7TlQjsDTbBtlnuKlW0ZXrjqL0=
 github.com/benpate/derp v0.9.2 h1:cq0KsxdF3CrWAZ4bttJvoIOyJx3t9jczkxu3ifgOyEg=
 github.com/benpate/derp v0.9.2/go.mod h1:uk1EoSDvBEkBIOw4J/qeLga2kUCvKukIFFk3YE7Zjtk=
 github.com/benpate/derp v0.9.4 h1:tn7LIZe/fo5/9qJ67GZ6QL+nY9jzKX2O0mXdCbN7s5E=
