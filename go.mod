@@ -1,6 +1,6 @@
 module github.com/benpate/schema
 
-go 1.14
+go 1.15
 
 require (
 	github.com/benpate/convert v0.7.2
