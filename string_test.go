@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestStringUnmarshalSimple1(t *testing.T) {
+func TestStringUnmarshalSimple(t *testing.T) {
 
 	value := []byte(`{"type":"string", "minLength":10, "maxLength":100}`)
 
@@ -20,7 +20,7 @@ func TestStringUnmarshalSimple1(t *testing.T) {
 	assert.Equal(t, str.MaxLength, null.NewInt(100))
 }
 
-func TestStringUnmarshalComplete1(t *testing.T) {
+func TestStringUnmarshalComplete(t *testing.T) {
 
 	value := []byte(`{"type":"string", "format":"date", "pattern":"abc123", "minLength":10, "maxLength":100, "required":true}`)
 
@@ -36,9 +36,9 @@ func TestStringUnmarshalComplete1(t *testing.T) {
 	assert.Equal(t, str.Pattern, "abc123") // TODO: this is not a valid RegEx
 }
 
-func TestStringFormatLowercase1(t *testing.T) {
+func TestStringFormatLowercase(t *testing.T) {
 
-	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"lower=2"}`))
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"lowercase=2"}`))
 
 	require.Nil(t, err)
 
@@ -47,9 +47,9 @@ func TestStringFormatLowercase1(t *testing.T) {
 	require.Nil(t, s.Validate("ENOUGH-LOWERCASE-ab"))
 }
 
-func TestStringFormatUppercase1(t *testing.T) {
+func TestStringFormatUppercase(t *testing.T) {
 
-	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"upper=2"}`))
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"uppercase=2"}`))
 
 	require.Nil(t, err)
 

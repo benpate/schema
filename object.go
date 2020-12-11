@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"strings"
+
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/path"
@@ -142,4 +144,8 @@ func (object *Object) UnmarshalMap(data map[string]interface{}) error {
 	}
 
 	return err
+}
+
+func (object Object) MarshalJavascript(b *strings.Builder) {
+
 }

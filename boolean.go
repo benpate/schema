@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
@@ -76,4 +77,8 @@ func (boolean *Boolean) UnmarshalMap(data map[string]interface{}) error {
 	boolean.Required = convert.Bool(data["required"])
 
 	return nil
+}
+
+func (boolean Boolean) MarshalJavascript(b *strings.Builder) {
+
 }

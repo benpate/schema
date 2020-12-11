@@ -2,6 +2,7 @@ package schema
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
@@ -85,4 +86,8 @@ func (array *Array) UnmarshalMap(data map[string]interface{}) error {
 	array.Required = convert.Bool(data["required"])
 
 	return err
+}
+
+func (array Array) MarshalJavascript(b *strings.Builder) {
+
 }

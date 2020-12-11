@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
@@ -22,6 +23,9 @@ type Element interface {
 
 	// MarshalMap populates the object data into a map[string]interface{}
 	MarshalMap() map[string]interface{}
+
+	// MarshalJavascript generates Javascript validation code for this element type.
+	MarshalJavascript(*strings.Builder)
 }
 
 // WritableElement represents an Element (usually a pointer to a concrete type) whose value can be changed.

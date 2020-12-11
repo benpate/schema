@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"strings"
+
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
@@ -113,4 +115,6 @@ func (integer *Integer) UnmarshalMap(data map[string]interface{}) error {
 	integer.Required = convert.Bool(data["required"])
 
 	return err
+}
+func (integer Integer) MarshalJavascript(b *strings.Builder) {
 }

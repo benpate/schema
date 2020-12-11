@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"strings"
+
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
@@ -101,4 +103,9 @@ func (number *Number) UnmarshalMap(data map[string]interface{}) error {
 	number.Required = convert.Bool(data["required"])
 
 	return err
+}
+
+func (number Number) MarshalJavascript(b *strings.Builder) {
+
+	//	b.WriteString(`v = Math.parseFloat(v)`)
 }

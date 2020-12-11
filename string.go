@@ -138,3 +138,10 @@ func (str *String) UnmarshalMap(data map[string]interface{}) error {
 
 	return err
 }
+
+func (str String) MarshalJavascript(b *strings.Builder) {
+
+	if str.Required {
+		b.WriteString(`if (v=="") {return false;}`)
+	}
+}

@@ -1,12 +1,5 @@
 package schema
 
-import (
-	"encoding/json"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-)
-
 /*
 func TestSchema(t *testing.T) {
 
@@ -49,23 +42,6 @@ func TestPath(t *testing.T) {
 	assert.Nil(t, err)
 }
 */
-
-func TestUnmarshal(t *testing.T) {
-
-	var schema Schema
-
-	err := json.Unmarshal(getTestSchema(), &schema)
-
-	assert.Nil(t, err)
-	// spew.Dump(schema)
-
-	result, err := json.Marshal(schema)
-
-	assert.Nil(t, err)
-
-	t.Log(string(result))
-
-}
 
 func getTestSchema() []byte {
 

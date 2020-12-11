@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
@@ -32,8 +33,18 @@ func (schema Schema) Validate(value interface{}) error {
 
 // MarshalJSON converts a schema into JSON.
 func (schema Schema) MarshalJSON() ([]byte, error) {
-
 	return json.Marshal(schema.MarshalMap())
+}
+
+// MarshalJavascript generates a Javascript validation function for this schema.
+func (schema Schema) MarshalJavascript(name string) string {
+	var b strings.Builder
+
+	b.WriteString(`function ` + name + `(v){`)
+	schema.Element.MarshalJavascript(&b)
+	b.WriteString(`return true;}`)
+
+	return b.String()
 }
 
 // MarshalMap converts a schema into a map[string]interface{}
