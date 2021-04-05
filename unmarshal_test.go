@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -13,7 +12,6 @@ func TestUnmarshal_Success(t *testing.T) {
 
 	s := Unmarshal(`{"$id":"TEST-SCHEMA", "$comment":"Test Unmarshal", "type":"string", "maxLength":10}`)
 
-	spew.Dump(s)
 	require.Equal(t, "TEST-SCHEMA", s.ID)
 	require.Equal(t, "Test Unmarshal", s.Comment)
 

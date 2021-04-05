@@ -33,8 +33,6 @@ func TestPath(t *testing.T) {
 
 	s := getTestSchema()
 
-	spew.Dump(s)
-
 	city, err := s.Path("address.city")
 
 	assert.Equal(t, city.Type(), "string")

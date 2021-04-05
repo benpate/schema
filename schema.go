@@ -16,6 +16,11 @@ type Schema struct {
 	Element Element
 }
 
+// New generates a fully initialized Schema
+func New() *Schema {
+	return &Schema{}
+}
+
 // Path traverses a path into this schema, and returns a matching Element, or an error.
 func (schema Schema) Path(p path.Path) (Element, error) {
 	return schema.Element.Path(p)

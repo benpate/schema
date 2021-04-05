@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/benpate/derp"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -86,7 +85,6 @@ func TestUnmarshal2(t *testing.T) {
 	assert.Nil(t, err)
 
 	if err != nil {
-		spew.Dump(err, string(data))
 		err2 := derp.Wrap(err, "schema.TestWeirdError", "Invalid JSON in template.json", string(data))
 		derp.Report(err2)
 	}

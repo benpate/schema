@@ -36,6 +36,7 @@ func TestStringUnmarshalComplete(t *testing.T) {
 	assert.Equal(t, str.Pattern, "abc123") // TODO: this is not a valid RegEx
 }
 
+/*
 func TestStringFormatLowercase(t *testing.T) {
 
 	s, err := UnmarshalJSON([]byte(`{"type":"string", "format":"lowercase=2"}`))
@@ -56,4 +57,16 @@ func TestStringFormatUppercase(t *testing.T) {
 	require.NotNil(t, s.Validate("not-enough-uppercase"))
 	require.NotNil(t, s.Validate("not-enough-uppercase-A"))
 	require.Nil(t, s.Validate("enough-uppercase-AB"))
+}
+*/
+func TestStringEnum(t *testing.T) {
+
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "enum":["John", "Sarah", "Kyle"]}`))
+
+	require.Nil(t, err)
+
+	require.Nil(t, s.Validate("John"))
+	require.Nil(t, s.Validate("Sarah"))
+	require.Nil(t, s.Validate("Kyle"))
+	require.NotNil(t, s.Validate("Anyone Else"))
 }

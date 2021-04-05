@@ -15,6 +15,7 @@ type String struct {
 	Default   string
 	MinLength null.Int
 	MaxLength null.Int
+	Enum      []string
 	Pattern   string
 	Format    string
 	Required  bool
@@ -63,6 +64,12 @@ func (str String) Validate(value interface{}) error {
 	if str.MaxLength.IsPresent() {
 		if len(stringValue) > str.MaxLength.Int() {
 			result.Add(ValidationError{Message: "Maximum length is " + str.MaxLength.String()})
+		}
+	}
+
+	if len(str.Enum) > 0 {
+		if !contains(str.Enum, stringValue) {
+			result.Add(ValidationError{Message: "must match one of the required values."})
 		}
 	}
 
@@ -117,6 +124,10 @@ func (str String) MarshalMap() map[string]interface{} {
 		result["format"] = str.Format
 	}
 
+	if len(str.Enum) > 0 {
+		result["enum"] = str.Enum
+	}
+
 	return result
 }
 
@@ -135,6 +146,7 @@ func (str *String) UnmarshalMap(data map[string]interface{}) error {
 	str.Pattern = convert.String(data["pattern"])
 	str.Format = convert.String(data["format"])
 	str.Required = convert.Bool(data["required"])
+	str.Enum = convert.SliceOfString(data["enum"])
 
 	return err
 }
@@ -142,6 +154,23 @@ func (str *String) UnmarshalMap(data map[string]interface{}) error {
 func (str String) MarshalJavascript(b *strings.Builder) {
 
 	if str.Required {
-		b.WriteString(`if (v=="") {return false;}`)
+		b.WriteString(` if (v=="") {return false;}`)
 	}
+
+	if len(str.Enum) > 0 {
+		b.WriteString("")
+	}
+
+	b.WriteString(`return true;`)
+}
+
+func contains(options []string, value string) bool {
+
+	for _, option := range options {
+		if option == value {
+			return true
+		}
+	}
+
+	return false
 }
