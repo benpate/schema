@@ -8,5 +8,5 @@ type Nullable interface {
 }
 
 type Enumerator interface {
-	Enumerate() []interface{}
+	Enumerate() []string
 }
