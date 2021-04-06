@@ -75,5 +75,30 @@ func TestStringLength(t *testing.T) {
 		assert.Nil(t, s.Validate("this is ok"))
 		assert.NotNil(t, s.Validate("this is a really long string and it should fail becuase it's too long."))
 	}
+}
 
+func TestStringEnum(t *testing.T) {
+
+	s := String{
+		Enum: []string{"Joseph", "Simon", "Sara", "Mary"},
+	}
+
+	require.Nil(t, s.Validate("Joseph"))
+	require.Nil(t, s.Validate("Simon"))
+	require.Nil(t, s.Validate("Sara"))
+	require.Nil(t, s.Validate("Mary"))
+	require.NotNil(t, s.Validate("Mr. Black"))
+	require.NotNil(t, s.Validate(3.14159265358979323846))
+}
+
+func TestStringEnumUnmarshal(t *testing.T) {
+
+	s, err := UnmarshalJSON([]byte(`{"type":"string", "enum":["John", "Sarah", "Kyle"]}`))
+
+	require.Nil(t, err)
+
+	require.Nil(t, s.Validate("John"))
+	require.Nil(t, s.Validate("Sarah"))
+	require.Nil(t, s.Validate("Kyle"))
+	require.NotNil(t, s.Validate("Anyone Else"))
 }

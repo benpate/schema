@@ -20,6 +20,19 @@ func TestInteger(t *testing.T) {
 	assert.NotNil(t, s.Validate("string-bad"))
 }
 
+func TestIntegerEnum(t *testing.T) {
+
+	s := Integer{
+		Enum: []int{1, 2, 3},
+	}
+
+	require.Nil(t, s.Validate(1))
+	require.Nil(t, s.Validate(2))
+	require.Nil(t, s.Validate(3))
+	require.NotNil(t, s.Validate(4))
+	require.NotNil(t, s.Validate("hamburger"))
+}
+
 func TestIntegerRequired(t *testing.T) {
 
 	j := []byte(`{"type":"integer", "required":true}`)

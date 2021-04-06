@@ -3,6 +3,7 @@ package schema
 import (
 	"strings"
 
+	"github.com/benpate/compare"
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
@@ -15,7 +16,13 @@ type Integer struct {
 	Minimum    null.Int `json:"minimum"`
 	Maximum    null.Int `json:"maximum"`
 	MultipleOf null.Int `json:"multipleOf"`
+	Enum       []int    `json:"emum"`
 	Required   bool
+}
+
+// Enumerate implements the "Enumerator" interface
+func (integer Integer) Enumerate() []string {
+	return convert.SliceOfString(integer.Enum)
 }
 
 // Type returns the data type of this Schema
@@ -70,6 +77,12 @@ func (integer Integer) Validate(value interface{}) error {
 		}
 	}
 
+	if len(integer.Enum) > 0 {
+		if !compare.Contains(integer.Enum, intValue) {
+			result.Add(ValidationError{Message: "must contain one of the specified values"})
+		}
+	}
+
 	return result.Error()
 }
 
@@ -96,6 +109,10 @@ func (integer Integer) MarshalMap() map[string]interface{} {
 		result["multipleOf"] = integer.MultipleOf.Int()
 	}
 
+	if len(integer.Enum) > 0 {
+		result["enum"] = integer.Enum
+	}
+
 	return result
 }
 
@@ -113,6 +130,7 @@ func (integer *Integer) UnmarshalMap(data map[string]interface{}) error {
 	integer.Maximum = convert.NullInt(data["maximum"])
 	integer.MultipleOf = convert.NullInt(data["multipleOf"])
 	integer.Required = convert.Bool(data["required"])
+	integer.Enum = convert.SliceOfInt(data["enum"])
 
 	return err
 }

@@ -6,3 +6,7 @@ package schema
 type Nullable interface {
 	IsNull() bool
 }
+
+type Enumerator interface {
+	Enumerate() []interface{}
+}

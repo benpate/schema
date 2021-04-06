@@ -3,6 +3,7 @@ package schema
 import (
 	"strings"
 
+	"github.com/benpate/compare"
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/list"
@@ -19,6 +20,11 @@ type String struct {
 	Pattern   string
 	Format    string
 	Required  bool
+}
+
+// Enumerate implements the "Enumerator" interface
+func (str String) Enumerate() []string {
+	return str.Enum
 }
 
 // Type returns the data type of this Element
@@ -68,7 +74,7 @@ func (str String) Validate(value interface{}) error {
 	}
 
 	if len(str.Enum) > 0 {
-		if !contains(str.Enum, stringValue) {
+		if !compare.Contains(str.Enum, stringValue) {
 			result.Add(ValidationError{Message: "must match one of the required values."})
 		}
 	}
@@ -162,15 +168,4 @@ func (str String) MarshalJavascript(b *strings.Builder) {
 	}
 
 	b.WriteString(`return true;`)
-}
-
-func contains(options []string, value string) bool {
-
-	for _, option := range options {
-		if option == value {
-			return true
-		}
-	}
-
-	return false
 }

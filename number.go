@@ -3,6 +3,7 @@ package schema
 import (
 	"strings"
 
+	"github.com/benpate/compare"
 	"github.com/benpate/convert"
 	"github.com/benpate/derp"
 	"github.com/benpate/null"
@@ -14,7 +15,13 @@ type Number struct {
 	Default  null.Float `json:"default"`
 	Minimum  null.Float `json:"minimum"`
 	Maximum  null.Float `json:"maximum"`
+	Enum     []float64  `json:"enum"`
 	Required bool
+}
+
+// Enumerate implements the "Enumerator" interface
+func (number Number) Enumerate() []string {
+	return convert.SliceOfString(number.Enum)
 }
 
 // Type returns the data type of this Element
@@ -63,6 +70,12 @@ func (number Number) Validate(value interface{}) error {
 		}
 	}
 
+	if len(number.Enum) > 0 {
+		if !compare.Contains(number.Enum, numberValue) {
+			result.Add(ValidationError{Message: "must contain one of the specified values"})
+		}
+	}
+
 	return result.Error()
 }
 
@@ -85,6 +98,10 @@ func (number Number) MarshalMap() map[string]interface{} {
 		result["maximum"] = number.Maximum.Float()
 	}
 
+	if len(number.Enum) > 0 {
+		result["enum"] = number.Enum
+	}
+
 	return result
 }
 
@@ -101,6 +118,7 @@ func (number *Number) UnmarshalMap(data map[string]interface{}) error {
 	number.Minimum = convert.NullFloat(data["minimum"])
 	number.Maximum = convert.NullFloat(data["maximum"])
 	number.Required = convert.Bool(data["required"])
+	number.Enum = convert.SliceOfFloat(data["enum"])
 
 	return err
 }

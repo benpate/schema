@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/benpate/null"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,12 +15,25 @@ func TestNumber(t *testing.T) {
 		Maximum: null.NewFloat(10),
 	}
 
-	assert.NotNil(t, s.Validate(-1))
-	assert.NotNil(t, s.Validate(0))
-	assert.Nil(t, s.Validate(2))
-	assert.Nil(t, s.Validate(4))
-	assert.Nil(t, s.Validate(6))
-	assert.Nil(t, s.Validate(8))
+	require.NotNil(t, s.Validate(-1))
+	require.NotNil(t, s.Validate(0))
+	require.Nil(t, s.Validate(2))
+	require.Nil(t, s.Validate(4))
+	require.Nil(t, s.Validate(6))
+	require.Nil(t, s.Validate(8))
+}
+
+func TestNumberEnum(t *testing.T) {
+
+	s := Number{
+		Enum: []float64{1, 2, 3},
+	}
+
+	require.Nil(t, s.Validate(1))
+	require.Nil(t, s.Validate(2))
+	require.Nil(t, s.Validate(3))
+	require.NotNil(t, s.Validate(4))
+	require.NotNil(t, s.Validate("hamburger"))
 }
 
 func TestNumberRequired(t *testing.T) {

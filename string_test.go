@@ -5,7 +5,6 @@ import (
 
 	"github.com/benpate/null"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestStringUnmarshalSimple(t *testing.T) {
@@ -59,14 +58,3 @@ func TestStringFormatUppercase(t *testing.T) {
 	require.Nil(t, s.Validate("enough-uppercase-AB"))
 }
 */
-func TestStringEnum(t *testing.T) {
-
-	s, err := UnmarshalJSON([]byte(`{"type":"string", "enum":["John", "Sarah", "Kyle"]}`))
-
-	require.Nil(t, err)
-
-	require.Nil(t, s.Validate("John"))
-	require.Nil(t, s.Validate("Sarah"))
-	require.Nil(t, s.Validate("Kyle"))
-	require.NotNil(t, s.Validate("Anyone Else"))
-}
